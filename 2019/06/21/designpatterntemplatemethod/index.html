@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
+<meta name="description" content="在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试知识点总结">
-<meta property="og:url" content="http://luqilinok.github.io/2019/05/29/interview/index.html">
+<meta property="og:title" content="designpatterntemplatemethod">
+<meta property="og:url" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
+<meta property="og:description" content="在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/05/29/interview/C++面试知识点.png">
-<meta property="og:updated_time" content="2019-06-20T13:01:04.786Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/C:/Users/luqil/Desktop/designpatterntemplatemethod/designpatterntemlatemethod.png">
+<meta property="og:updated_time" content="2019-06-21T00:20:14.031Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面试知识点总结">
-<meta name="twitter:description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/05/29/interview/C++面试知识点.png">
+<meta name="twitter:title" content="designpatterntemplatemethod">
+<meta name="twitter:description" content="在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/C:/Users/luqil/Desktop/designpatterntemplatemethod/designpatterntemlatemethod.png">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://luqilinok.github.io/2019/05/29/interview/">
+  <link rel="canonical" href="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/">
 
 
 
 
 
-  <title>面试知识点总结 | Lu QiLin's Blog</title>
+  <title>designpatterntemplatemethod | Lu QiLin's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/05/29/interview/">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LuQiLin">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">面试知识点总结</h1>
+          <h1 class="post-title" itemprop="name headline">designpatterntemplatemethod</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-29T09:35:15+08:00">
-                2019-05-29
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-21T08:16:51+08:00">
+                2019-06-21
               </time>
             
 
@@ -353,11 +353,18 @@
       
 
       
-        <p>面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。<br><img src="/2019/05/29/interview/C++面试知识点.png" alt="C++面试知识点"><br><a id="more"></a></p>
-<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="#jump1">01.数据结构与算法</a><br><a href="#jump2">02.C/C++语言</a><br><a href="#jump3">03.操作系统</a><br><a href="#jump4">04.Linux系统编程</a><br><a href="jump5">05.计算机网络</a><br><a href="#jump6">06.系统设计</a><br><a href="#jump7">07.Linux内核</a><br><a href="#jump8">08.设计模式</a><br><a href="#jump9">09.分布式系统</a><br><a href="#jump10">10.数据库</a></p>
-<h2 id="jump1">数据结构与算法</h2>
-
-<p>1、数据结构之排序算法<br>2、数据结构之字符串函数<br>2、数据结构之链表<br>3、数据结构之树遍历<br>4、数据结构之高级树<br>5、数据结构之图算法<br>6、Hash函数以及冲突<br>7、海量数据处理算法<br>8、刷题总结<br>9、算法题目分类与总结</p>
+        <p>在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。<br>如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？</p>
+<a id="more"></a>
+<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>定义一个操作中的算法的骨架（稳定），而将一些步骤延迟（变化）到子类中。Template Method使得子类可以不改变（复用）一个算法的结构即可重定义（override重写）该算法的某些特定步骤</p>
+<p>​                                                             –《设计模式》GoF</p>
+<hr>
+<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/21/designpatterntemplatemethod/C:/Users\luqil\Desktop\designpatterntemplatemethod\designpatterntemlatemethod.png" alt="模板方法"></p>
+<hr>
+<h1 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类库</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Libary</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		step1();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (step2()) &#123; <span class="comment">// 动态绑定</span></span><br><span class="line">			step3();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">			step4(); <span class="comment">// 动态绑定</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step1"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step3"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">step2</span><span class="params">()</span> </span>= <span class="number">0</span>; <span class="comment">// 纯虚函数</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">step4</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 应用开发人员</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span> :</span> <span class="keyword">public</span> Libary &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">step2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step4"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Libary* libary = <span class="keyword">new</span> Application;</span><br><span class="line">	libary-&gt;run();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h1><p>1.Template Method模式是一种非常基础性的设计模式，在面向对象系统中有着大量的应用。它用最简洁的机制（虚函数的多态性）为很多应用程序框架提供了灵活的扩展点，是代码复用方面的基本实现结构。</p>
+<p>2.除了可以灵活应对子步骤的变化外，“不要调用我，让我来调用你”的反向控制结构是Template Method的典型应用</p>
+<p>3.在具体实现方面，被Template Method调用的虚方法可以具有实现，也可以没有任何实现（抽象方法、纯虚方法），但一般推荐将它们设置为protected方法。</p>
 
       
     </div>
@@ -382,8 +389,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/29/datastructuresort/" rel="next" title="数据结构之排序算法">
-                <i class="fa fa-chevron-left"></i> 数据结构之排序算法
+              <a href="/2019/06/20/designpattern/" rel="next" title="面向对象与设计模式">
+                <i class="fa fa-chevron-left"></i> 面向对象与设计模式
               </a>
             
           </div>
@@ -392,8 +399,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/05/29/datastructurestringfunc/" rel="prev" title="数据结构之字符串函数">
-                数据结构之字符串函数 <i class="fa fa-chevron-right"></i>
+              <a href="/2019/06/21/designpatternstrategy/" rel="prev" title="策略模式">
+                策略模式 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -517,7 +524,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#jump1"><span class="nav-number"></span> <span class="nav-text">数据结构与算法</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">2.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码示例"><span class="nav-number">3.</span> <span class="nav-text">代码示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#要点总结"><span class="nav-number">4.</span> <span class="nav-text">要点总结</span></a></li></ol></div>
             
 
           </div>

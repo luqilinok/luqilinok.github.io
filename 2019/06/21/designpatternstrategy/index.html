@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
+<meta name="description" content="在软件构建过程中，某些对象使用的算法可能多种多样，经常改变，如果将这些算法都编码到对象中，将会使对象变得异常复杂；而且有时候支持不使用的算法也是一个性能负担。如何在运行时根据需要透明地更改对象的算法？将算法与对象本身解耦，从而避免上述问题？  模式定义定义一系列算法，把它们一个个封装起来，并且使它们可互相替换（变化）。该模式使得算法课独立于使用它的客户程序（稳定）而变化（扩展，子类化）。 ​">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面试知识点总结">
-<meta property="og:url" content="http://luqilinok.github.io/2019/05/29/interview/index.html">
+<meta property="og:title" content="策略模式">
+<meta property="og:url" content="http://luqilinok.github.io/2019/06/21/designpatternstrategy/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
+<meta property="og:description" content="在软件构建过程中，某些对象使用的算法可能多种多样，经常改变，如果将这些算法都编码到对象中，将会使对象变得异常复杂；而且有时候支持不使用的算法也是一个性能负担。如何在运行时根据需要透明地更改对象的算法？将算法与对象本身解耦，从而避免上述问题？  模式定义定义一系列算法，把它们一个个封装起来，并且使它们可互相替换（变化）。该模式使得算法课独立于使用它的客户程序（稳定）而变化（扩展，子类化）。 ​">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/05/29/interview/C++面试知识点.png">
-<meta property="og:updated_time" content="2019-06-20T13:01:04.786Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/21/designpatternstrategy/C:/Blog/myblog/source/_posts/designpatternstrategy/strategy.png">
+<meta property="og:updated_time" content="2019-06-21T00:38:04.246Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面试知识点总结">
-<meta name="twitter:description" content="面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/05/29/interview/C++面试知识点.png">
+<meta name="twitter:title" content="策略模式">
+<meta name="twitter:description" content="在软件构建过程中，某些对象使用的算法可能多种多样，经常改变，如果将这些算法都编码到对象中，将会使对象变得异常复杂；而且有时候支持不使用的算法也是一个性能负担。如何在运行时根据需要透明地更改对象的算法？将算法与对象本身解耦，从而避免上述问题？  模式定义定义一系列算法，把它们一个个封装起来，并且使它们可互相替换（变化）。该模式使得算法课独立于使用它的客户程序（稳定）而变化（扩展，子类化）。 ​">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/21/designpatternstrategy/C:/Blog/myblog/source/_posts/designpatternstrategy/strategy.png">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://luqilinok.github.io/2019/05/29/interview/">
+  <link rel="canonical" href="http://luqilinok.github.io/2019/06/21/designpatternstrategy/">
 
 
 
 
 
-  <title>面试知识点总结 | Lu QiLin's Blog</title>
+  <title>策略模式 | Lu QiLin's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/05/29/interview/">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/21/designpatternstrategy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LuQiLin">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">面试知识点总结</h1>
+          <h1 class="post-title" itemprop="name headline">策略模式</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-29T09:35:15+08:00">
-                2019-05-29
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-21T08:29:24+08:00">
+                2019-06-21
               </time>
             
 
@@ -353,11 +353,19 @@
       
 
       
-        <p>面试知识点总结，侧重于C/C++,包括操作系统、Linux系统编程、计算机网络、设计模式等。<br><img src="/2019/05/29/interview/C++面试知识点.png" alt="C++面试知识点"><br><a id="more"></a></p>
-<h3 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h3><p><a href="#jump1">01.数据结构与算法</a><br><a href="#jump2">02.C/C++语言</a><br><a href="#jump3">03.操作系统</a><br><a href="#jump4">04.Linux系统编程</a><br><a href="jump5">05.计算机网络</a><br><a href="#jump6">06.系统设计</a><br><a href="#jump7">07.Linux内核</a><br><a href="#jump8">08.设计模式</a><br><a href="#jump9">09.分布式系统</a><br><a href="#jump10">10.数据库</a></p>
-<h2 id="jump1">数据结构与算法</h2>
-
-<p>1、数据结构之排序算法<br>2、数据结构之字符串函数<br>2、数据结构之链表<br>3、数据结构之树遍历<br>4、数据结构之高级树<br>5、数据结构之图算法<br>6、Hash函数以及冲突<br>7、海量数据处理算法<br>8、刷题总结<br>9、算法题目分类与总结</p>
+        <p>在软件构建过程中，某些对象使用的算法可能多种多样，经常改变，如果将这些算法都编码到对象中，将会使对象变得异常复杂；而且有时候支持不使用的算法也是一个性能负担。<br>如何在运行时根据需要透明地更改对象的算法？将算法与对象本身解耦，从而避免上述问题？</p>
+<hr>
+<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>定义一系列算法，把它们一个个封装起来，并且使它们可互相替换（变化）。该模式使得算法课独立于使用它的客户程序（稳定）而变化（扩展，子类化）。</p>
+<p>​                                                                                                   —《设计模式》GoF</p>
+<hr>
+<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/21/designpatternstrategy/C:/Blog\myblog\source\_posts\designpatternstrategy\strategy.png" alt="策略模式"></p>
+<hr>
+<h1 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">class</span> <span class="title">Context</span>;</span></span><br><span class="line"><span class="keyword">extern</span> <span class="class"><span class="keyword">class</span> <span class="title">StrategyFactory</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaxStrategy</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">double</span> <span class="title">calculate</span><span class="params">(<span class="keyword">const</span> Context&amp; context)</span> </span>= <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">virtual</span> ~TaxStrategy();</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CNTax</span> :</span><span class="keyword">public</span> TaxStrategy</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">double</span> <span class="title">calculate</span><span class="params">(<span class="keyword">const</span> Context&amp; context)</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="comment">//do something</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SalesOrfer</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	TaxStrategy* taxStrategy;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	SalesOrfer(StrategyFactory* strategyFactory)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;taxStrategy = strategyFactory-&gt;newStrategy();</span><br><span class="line">	&#125;</span><br><span class="line">	~SalesOrfer()</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">delete</span> <span class="keyword">this</span>-&gt;taxStrategy;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">double</span> <span class="title">CaucuteTax</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		Context context;</span><br><span class="line">		<span class="keyword">double</span> val = TaxStrategy-&gt;calculate(context);</span><br><span class="line">		<span class="keyword">return</span> val;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.Strategy及其子类为组件提供了一系列可重用的算法，从而可以使得类型在运行时方便地根据需要在各个算法之间进行切换。</p>
+<p>2.Strategy模式提供了条件判断语句之外的另一种选择，消除了条件判断语句，就是在解耦合。含有许多条件判断语句的代码通常需要Strategy模式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">绝对稳定的情况下可以使用条件语句</span><br></pre></td></tr></table></figure>
+<p>3.如果Strategy对象没有实例变量，那么各个上下文可以共享同一个Strategy对象，从而节省对象开销。</p>
 
       
     </div>
@@ -382,8 +390,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/05/29/datastructuresort/" rel="next" title="数据结构之排序算法">
-                <i class="fa fa-chevron-left"></i> 数据结构之排序算法
+              <a href="/2019/06/21/designpatterntemplatemethod/" rel="next" title="designpatterntemplatemethod">
+                <i class="fa fa-chevron-left"></i> designpatterntemplatemethod
               </a>
             
           </div>
@@ -391,10 +399,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/05/29/datastructurestringfunc/" rel="prev" title="数据结构之字符串函数">
-                数据结构之字符串函数 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -517,7 +521,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#jump1"><span class="nav-number"></span> <span class="nav-text">数据结构与算法</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">1.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">2.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例代码"><span class="nav-number">3.</span> <span class="nav-text">示例代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
