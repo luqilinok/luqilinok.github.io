@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。  模式定义运用共享技术有效地支持大量细粒度的对象。 ​">
+<meta name="description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="享元模式">
 <meta property="og:url" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。  模式定义运用共享技术有效地支持大量细粒度的对象。 ​">
+<meta property="og:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/flyweight.png">
-<meta property="og:updated_time" content="2019-06-23T13:33:23.322Z">
+<meta property="og:updated_time" content="2019-06-23T13:34:04.559Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="享元模式">
-<meta name="twitter:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。  模式定义运用共享技术有效地支持大量细粒度的对象。 ​">
+<meta name="twitter:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
 <meta name="twitter:image" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/flyweight.png">
 
 
@@ -305,7 +305,7 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-23T21:33:23+08:00" content="2019-06-23">
+    <time itemprop="dateUpdated" datetime="2019-06-23T21:34:04+08:00" content="2019-06-23">
       2019-06-23
     </time>
   </span>
@@ -362,6 +362,7 @@
       
         <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。</p>
 <p>2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。</p>
+<a id="more"></a>
 <hr>
 <h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>运用共享技术有效地支持大量细粒度的对象。</p>
 <p>​                                                                         ——《设计模式》GoF</p>
