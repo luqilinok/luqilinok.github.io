@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
+<meta name="description" content="动机1.在软件构建过程中，经常会出现多个对象相互关联交互的情况，对象之间常常会维持一种复杂的引用关系，如果遇到一些需求的更改，这种直接的引用关系将面临不断的变化。 2.在这种情况下，我们可以使用一个“中介对象”来管理对象间的关联关系，避免相互交互的对象之间的紧耦合引用关系，从而更好地抵御变化。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="享元模式">
-<meta property="og:url" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/index.html">
+<meta property="og:title" content="中介者">
+<meta property="og:url" content="http://luqilinok.github.io/2019/06/25/designpatternmediator/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
+<meta property="og:description" content="动机1.在软件构建过程中，经常会出现多个对象相互关联交互的情况，对象之间常常会维持一种复杂的引用关系，如果遇到一些需求的更改，这种直接的引用关系将面临不断的变化。 2.在这种情况下，我们可以使用一个“中介对象”来管理对象间的关联关系，避免相互交互的对象之间的紧耦合引用关系，从而更好地抵御变化。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/flyweight.png">
-<meta property="og:updated_time" content="2019-06-23T13:34:04.559Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/25/designpatternmediator/mediator.png">
+<meta property="og:updated_time" content="2019-06-25T00:07:47.320Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="享元模式">
-<meta name="twitter:description" content="动机1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。 2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/23/designpatternflyweight/flyweight.png">
+<meta name="twitter:title" content="中介者">
+<meta name="twitter:description" content="动机1.在软件构建过程中，经常会出现多个对象相互关联交互的情况，对象之间常常会维持一种复杂的引用关系，如果遇到一些需求的更改，这种直接的引用关系将面临不断的变化。 2.在这种情况下，我们可以使用一个“中介对象”来管理对象间的关联关系，避免相互交互的对象之间的紧耦合引用关系，从而更好地抵御变化。">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/25/designpatternmediator/mediator.png">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://luqilinok.github.io/2019/06/23/designpatternflyweight/">
+  <link rel="canonical" href="http://luqilinok.github.io/2019/06/25/designpatternmediator/">
 
 
 
 
 
-  <title>享元模式 | Lu QiLin's Blog</title>
+  <title>中介者 | Lu QiLin's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/23/designpatternflyweight/">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/25/designpatternmediator/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LuQiLin">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">享元模式</h1>
+          <h1 class="post-title" itemprop="name headline">中介者</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-23T21:23:52+08:00">
-                2019-06-23
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-25T07:59:43+08:00">
+                2019-06-25
               </time>
             
 
@@ -305,8 +305,8 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-23T21:34:04+08:00" content="2019-06-23">
-      2019-06-23
+    <time itemprop="dateUpdated" datetime="2019-06-25T08:07:47+08:00" content="2019-06-25">
+      2019-06-25
     </time>
   </span>
 
@@ -360,21 +360,18 @@
       
 
       
-        <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>1.在软件系统采用纯粹对象方案的问题在于大量细粒度的对象会很快充斥在系统中，从而带来很高的运行时代价——主要指内存需求方面的代价。</p>
-<p>2.如何在避免大量细粒度对象问题的同时，让外部客户程序仍然能够透明地使用面向对象的方式来进行操作。</p>
+        <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>1.在软件构建过程中，经常会出现多个对象相互关联交互的情况，对象之间常常会维持一种复杂的引用关系，如果遇到一些需求的更改，这种直接的引用关系将面临不断的变化。</p>
+<p>2.在这种情况下，我们可以使用一个“中介对象”来管理对象间的关联关系，避免相互交互的对象之间的紧耦合引用关系，从而更好地抵御变化。</p>
 <a id="more"></a>
 <hr>
-<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>运用共享技术有效地支持大量细粒度的对象。</p>
-<p>​                                                                         ——《设计模式》GoF</p>
+<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>用一个中介对象来封装（封装变化）一系列的对象交互。中介者使各对象不需要显示的相互引用（编译时依赖-&gt;运行时依赖），从而使其耦合松散（管理变化），而且可以独立地改变它们之间的交互。</p>
+<p>​                                                                                  ——《设计模式》GoF</p>
 <hr>
-<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/23/designpatternflyweight/flyweight.png" alt="flyweight"></p>
+<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/25/designpatternmediator/mediator.png" alt="中介者"></p>
 <hr>
-<h1 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h1><p>比如一个字体库，每个字体对应一个对象，而不是需要一个字体就生成一个字体对象。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Font</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"></span><br><span class="line">    <span class="comment">//unique object key</span></span><br><span class="line">    <span class="built_in">string</span> key;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//object state</span></span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Font(<span class="keyword">const</span> <span class="built_in">string</span>&amp; key)&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FontFactory</span>&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">map</span>&lt;<span class="built_in">string</span>,Font* &gt; fontPool;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function">Font* <span class="title">GetFont</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; key)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">map</span>&lt;<span class="built_in">string</span>,Font*&gt;::iterator item=fontPool.find(key);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(item!=footPool.end())&#123;</span><br><span class="line">            <span class="keyword">return</span> fontPool[key];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            Font* font = <span class="keyword">new</span> Font(key);</span><br><span class="line">            fontPool[key]= font;</span><br><span class="line">            <span class="keyword">return</span> font;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<hr>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.面向对象很好地解决了抽象性的问题，但是作为一个运行在机器中的程序实体，我们需要考虑对象的代价问题，Flyweight主要解决面向对象的代价问题，一般不触及面向对象的抽象性问题。</p>
-<p>2.Flyweight采用对象共享的做饭来降低系统中对象的个数，从而降低细粒度对象给系统带来的内存压力。在具体实现方面，要注意对象状态的处理。</p>
-<p>3.对象的数量太大从而导致对象内存开销加大——什么样的数量才算大？这需要我们仔细的根据具体应用情况进行评估，而不能凭空臆断。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.将多个对象间复杂的关联关系解耦，Mediator模式将多个对象间的控制逻辑进行集中管理，变“多个对象相互关联”为“多个对象和一个中介者关联”，简化了系统的维护，抵御了可能的变化。</p>
+<p>2.随着控制逻辑的复杂化，Mediator具体对象的实现可能相当复杂。这时候可以对Mediator对象进行分解处理。</p>
+<p>3.Facade模式是解耦系统间（单向）的对象关系处理；Mediator模式是解耦系统内各个对象之间（双向）的关联关系。</p>
 
       
     </div>
@@ -399,8 +396,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/23/designpatternsingleton/" rel="next" title="单件模式">
-                <i class="fa fa-chevron-left"></i> 单件模式
+              <a href="/2019/06/24/designpatternadapter/" rel="next" title="适配器">
+                <i class="fa fa-chevron-left"></i> 适配器
               </a>
             
           </div>
@@ -408,10 +405,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/24/designpatternfacade/" rel="prev" title="门面模式">
-                门面模式 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -534,7 +527,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#动机"><span class="nav-number">1.</span> <span class="nav-text">动机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">2.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">3.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码示例"><span class="nav-number">4.</span> <span class="nav-text">代码示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#动机"><span class="nav-number">1.</span> <span class="nav-text">动机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">2.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">3.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
