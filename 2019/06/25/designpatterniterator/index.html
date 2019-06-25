@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="动机1.在软件系统中，由于应用环境的变化，常常需要将“一些现存的对象”放在新的环境中应用，但是新环境要求的接口是这些现存对象所不满足的。 2.如何应对这种“迁移的变化”？如何既能利用现有对象的良好实现？同时又能满足新的应用环境所要求的接口？">
+<meta name="description" content="动机1.在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种“透明遍历”也为“同一种算法在多种集合对象上进行操作”提供了可能。2.使用面向对象技术将这种遍历机制抽象为“迭代器对象”为“应对变化中的集合对象”提供了一种优雅的方式。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="适配器">
-<meta property="og:url" content="http://luqilinok.github.io/2019/06/24/designpatternadapter/index.html">
+<meta property="og:title" content="迭代器">
+<meta property="og:url" content="http://luqilinok.github.io/2019/06/25/designpatterniterator/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="动机1.在软件系统中，由于应用环境的变化，常常需要将“一些现存的对象”放在新的环境中应用，但是新环境要求的接口是这些现存对象所不满足的。 2.如何应对这种“迁移的变化”？如何既能利用现有对象的良好实现？同时又能满足新的应用环境所要求的接口？">
+<meta property="og:description" content="动机1.在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种“透明遍历”也为“同一种算法在多种集合对象上进行操作”提供了可能。2.使用面向对象技术将这种遍历机制抽象为“迭代器对象”为“应对变化中的集合对象”提供了一种优雅的方式。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/06/24/designpatternadapter/adapter.png">
-<meta property="og:updated_time" content="2019-06-24T08:21:09.062Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/25/designpatterniterator/iterator.png">
+<meta property="og:updated_time" content="2019-06-25T07:41:22.613Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="适配器">
-<meta name="twitter:description" content="动机1.在软件系统中，由于应用环境的变化，常常需要将“一些现存的对象”放在新的环境中应用，但是新环境要求的接口是这些现存对象所不满足的。 2.如何应对这种“迁移的变化”？如何既能利用现有对象的良好实现？同时又能满足新的应用环境所要求的接口？">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/24/designpatternadapter/adapter.png">
+<meta name="twitter:title" content="迭代器">
+<meta name="twitter:description" content="动机1.在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种“透明遍历”也为“同一种算法在多种集合对象上进行操作”提供了可能。2.使用面向对象技术将这种遍历机制抽象为“迭代器对象”为“应对变化中的集合对象”提供了一种优雅的方式。">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/25/designpatterniterator/iterator.png">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://luqilinok.github.io/2019/06/24/designpatternadapter/">
+  <link rel="canonical" href="http://luqilinok.github.io/2019/06/25/designpatterniterator/">
 
 
 
 
 
-  <title>适配器 | Lu QiLin's Blog</title>
+  <title>迭代器 | Lu QiLin's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/24/designpatternadapter/">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/25/designpatterniterator/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LuQiLin">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">适配器</h1>
+          <h1 class="post-title" itemprop="name headline">迭代器</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-24T16:10:25+08:00">
-                2019-06-24
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-25T15:29:23+08:00">
+                2019-06-25
               </time>
             
 
@@ -305,8 +305,8 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-24T16:21:09+08:00" content="2019-06-24">
-      2019-06-24
+    <time itemprop="dateUpdated" datetime="2019-06-25T15:41:22+08:00" content="2019-06-25">
+      2019-06-25
     </time>
   </span>
 
@@ -360,20 +360,20 @@
       
 
       
-        <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>1.在软件系统中，由于应用环境的变化，常常需要将“一些现存的对象”放在新的环境中应用，但是新环境要求的接口是这些现存对象所不满足的。</p>
-<p>2.如何应对这种“迁移的变化”？如何既能利用现有对象的良好实现？同时又能满足新的应用环境所要求的接口？</p>
+        <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>1.在软件构建过程中，集合对象内部结构常常变化各异。但对于这些集合对象，我们希望在不暴露其内部结构的同时，可以让外部客户代码透明地访问其中包含的元素；同时这种“透明遍历”也为“同一种算法在多种集合对象上进行操作”提供了可能。<br>2.使用面向对象技术将这种遍历机制抽象为“迭代器对象”为“应对变化中的集合对象”提供了一种优雅的方式。</p>
 <a id="more"></a>
 <hr>
-<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>将一个类的接口转换成客户希望的另一个接口。Adapter模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</p>
-<p>​                                                                                                ——《设计模式》GoF</p>
+<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>提供一种方法顺序访问一个聚合对象中的各个元素，而又不暴露（稳定）该对象的内部表示。</p>
+<p>​                                                                                                  ——《设计模式》GoF</p>
 <hr>
-<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/24/designpatternadapter/adapter.png" alt="adapter"></p>
+<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/25/designpatterniterator/iterator.png" alt="iterator"></p>
 <hr>
-<h1 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//目标接口（新接口）</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ITarget</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span></span>=<span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//遗留接口（老接口）</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IAdaptee</span>&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> data)</span></span>=<span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">bar</span><span class="params">()</span></span>=<span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//遗留类型</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OldClass</span>:</span> <span class="keyword">public</span> IAdaptee&#123;</span><br><span class="line">    <span class="comment">//....</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//对象适配器</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Adapter</span>:</span> <span class="keyword">public</span> ITarget&#123; <span class="comment">//继承</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    IAdaptee* pAdaptee;<span class="comment">//组合</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    </span><br><span class="line">    Adapter(IAdaptee* pAdaptee)&#123;</span><br><span class="line">        <span class="keyword">this</span>-&gt;pAdaptee=pAdaptee;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> data=pAdaptee-&gt;bar();</span><br><span class="line">        pAdaptee-&gt;foo(data);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//类适配器</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Adapter</span>:</span> <span class="keyword">public</span> ITarget,</span><br><span class="line">               <span class="keyword">protected</span> OldClass&#123; <span class="comment">//多继承</span></span><br><span class="line">               </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    IAdaptee* pAdaptee=<span class="keyword">new</span> OldClass();</span><br><span class="line">    </span><br><span class="line">    ITarget* pTarget=<span class="keyword">new</span> Adapter(pAdaptee);</span><br><span class="line">    pTarget-&gt;process();</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h1><p>再拿前面文件分割器的例子，加入我们要对二进制文件，文本文件，图片文件，视频文件进行分割。具体实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Iterator</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">first</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">next</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">isDone</span><span class="params">()</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> T &amp;<span class="title">current</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyCollection</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Iterator&lt;T&gt; GetIterator()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CollectionIterator</span> :</span> <span class="keyword">public</span> Iterator&lt;T&gt;</span><br><span class="line">&#123;</span><br><span class="line">    MyCollection&lt;T&gt; mc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    CollectionIterator(<span class="keyword">const</span> MyCollection&lt;T&gt; &amp;c) : mc(c) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">first</span><span class="params">()</span> override</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">next</span><span class="params">()</span> override</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">isDone</span><span class="params">()</span> <span class="keyword">const</span> override</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">T &amp;<span class="title">current</span><span class="params">()</span> override</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">MyAlgorithm</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    MyCollection&lt;<span class="keyword">int</span>&gt; mc;</span><br><span class="line"></span><br><span class="line">    Iterator&lt;<span class="keyword">int</span>&gt; iter = mc.GetIterator();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (iter.first(); !iter.isDone(); iter.next())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; iter.current() &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.Adapter模式主要应用于“希望复用一些现存的类，但是接口又与复用环境要求不一致的情况”，在遗留代码复用、类库迁移等方面非常有用。</p>
-<p>2.GoF 23种设计模式中定义了两种Adapter模式的实现结构：<strong>对象适配器</strong>和<strong>类适配器</strong>。但是类适配器采用“多继承”的实现方式，一般不推荐使用。对象适配器采用“对象组合”的方式，更符合松耦合精神。</p>
-<p>3.Adapter模式可以实现的非常灵活，不必拘泥于GoF23种设计模式中定义的两种结构。例如，完全可以将Adapter模式中的“现存对象”作为新的接口方法参数，来达到适配的目的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.迭代抽象：访问一个聚合对象的内容而无需暴露它的内部表示。</p>
+<p>2.迭代多态：为遍历不同的集合提供一个统一的接口，从而支持同样的算法在不同的集合结构上进行操作。</p>
+<p>3.迭代器的健壮性考虑：遍历的同时更改迭代器所在的集合结构，会导致问题。</p>
 
       
     </div>
@@ -398,8 +398,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/24/designpatternproxy/" rel="next" title="代理模式">
-                <i class="fa fa-chevron-left"></i> 代理模式
+              <a href="/2019/06/25/designpatterncomposite/" rel="next" title="组合模式">
+                <i class="fa fa-chevron-left"></i> 组合模式
               </a>
             
           </div>
@@ -407,10 +407,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/25/designpatternmediator/" rel="prev" title="中介者">
-                中介者 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
