@@ -79,14 +79,24 @@
 
 
 
+<meta name="description" content="图在数据结构中表示的是多对多的关系，这部分内容总结了数据结构中常用的图算法。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="datastructuregraph">
+<meta property="og:title" content="数据结构之图算法">
 <meta property="og:url" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="图在数据结构中表示的是多对多的关系，这部分内容总结了数据结构中常用的图算法。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-28T00:38:32.010Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/graph-list.png">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/graph-orth-list.png">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/graph-mutil-list.png">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/prim.jpg">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/Kruskal.jpg">
+<meta property="og:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/Dijkstra.gif">
+<meta property="og:updated_time" content="2019-06-28T02:24:58.558Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="datastructuregraph">
+<meta name="twitter:title" content="数据结构之图算法">
+<meta name="twitter:description" content="图在数据结构中表示的是多对多的关系，这部分内容总结了数据结构中常用的图算法。">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/28/datastructuregraph/graph-list.png">
 
 
 
@@ -122,7 +132,7 @@
 
 
 
-  <title>datastructuregraph | Lu QiLin's Blog</title>
+  <title>数据结构之图算法 | Lu QiLin's Blog</title>
   
 
 
@@ -276,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">datastructuregraph</h1>
+          <h1 class="post-title" itemprop="name headline">数据结构之图算法</h1>
         
 
         <div class="post-meta">
@@ -300,11 +310,33 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-28T08:38:32+08:00" content="2019-06-28">
+    <time itemprop="dateUpdated" datetime="2019-06-28T10:24:58+08:00" content="2019-06-28">
       2019-06-28
     </time>
   </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -333,7 +365,59 @@
       
 
       
-        
+        <p>图在数据结构中表示的是多对多的关系，这部分内容总结了数据结构中常用的图算法。</p>
+<a id="more"></a>
+<hr>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><ul>
+<li>有向图：之间只具有单向关系的顶点构成的图称为有向图。</li>
+<li>无向图：之间具有双向关系的顶点构成的图称为无向图。</li>
+<li>完全图 ：对于无向图来说，如果图中每个顶点都和除自身之外的所有顶点有关系，那么就称这样的无向图为完全图。</li>
+<li>入度：在有向图中，对于一个顶点 v 来说，箭头指向顶点 v 的弧的数目为该顶点的入度。</li>
+<li><p>出度：箭头远离顶点 v 的弧的数目为该顶点的出度。</p>
+</li>
+<li><p>路径 ：在图中从一个顶点到另一个顶点所走过的多个顶点组成的序列，就称为“路径”。</p>
+</li>
+<li><p>回路：在有向图中，路径是有向的。如果在路径中第一个顶点和最后一个顶点相同，此路径称为“回路”或“环”。</p>
+</li>
+<li><p>连通图：在无向图中，如果一个顶点到另一个顶点存在至少一条路径，称它们之间是连通的。 如果图中任意两个顶点之间都是连通的，则此图为连通图。</p>
+</li>
+<li><p>生成树：对于连通图来说，如果对其进行遍历，遍历过程中经过的顶点和边其实质是一棵树，在这里称之为“生成树”。</p>
+<blockquote>
+<p>由于连通图中，任意两顶点之间可能含有多条通路，所以一个连通图可能会对应多个生成树。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h1 id="图的表示方法"><a href="#图的表示方法" class="headerlink" title="图的表示方法"></a>图的表示方法</h1><h2 id="数组表示"><a href="#数组表示" class="headerlink" title="数组表示"></a>数组表示</h2><p>在使用二维数组存储图中顶点之间的关系时，如果顶点之间存在边或弧，在相应位置用 1 表示，反之用 0 表示；如果使用二维数组存储网中顶点之间的关系，顶点之间如果有边或者弧的存在，在数组的相应位置存储其权值；反之用 0 表示。</p>
+<h2 id="邻接表"><a href="#邻接表" class="headerlink" title="邻接表"></a>邻接表</h2><p><img src="/2019/06/28/datastructuregraph/graph-list.png" alt="邻接表"></p>
+<p>​                                                        邻接表表示图</p>
+<h2 id="十字链表"><a href="#十字链表" class="headerlink" title="十字链表"></a>十字链表</h2><p><img src="/2019/06/28/datastructuregraph/graph-orth-list.png" alt="十字链表"></p>
+<p>​                                                十字链表表视图</p>
+<h2 id="邻接多重表"><a href="#邻接多重表" class="headerlink" title="邻接多重表"></a>邻接多重表</h2><p><img src="/2019/06/28/datastructuregraph/graph-mutil-list.png" alt="邻接多重表"></p>
+<p>​                                            邻接多重表表视图</p>
+<hr>
+<h1 id="BFS"><a href="#BFS" class="headerlink" title="BFS"></a>BFS</h1><p>图的广度优先搜索（BFS）类似于树的层次遍历</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line">    <span class="built_in">vector</span>&lt;Node *&gt; neighbors;</span><br><span class="line">    Node(<span class="keyword">int</span> id) : id(id) &#123;&#125;</span><br><span class="line">    Node() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bfs</span><span class="params">(Node *root)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">queue</span>&lt;Node *&gt; q;</span><br><span class="line">    <span class="built_in">map</span>&lt;Node *, <span class="keyword">bool</span>&gt; visited;</span><br><span class="line">    q.push(root);</span><br><span class="line">    visited[root] = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">while</span> (!q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        Node *node = q.front();</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; node-&gt;id &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">        q.pop();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">vector</span>&lt;Node *&gt;::iterator it = node-&gt;neighbors.begin(); it != node-&gt;neighbors.end(); it++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (!visited.count(*it))</span><br><span class="line">            &#123;</span><br><span class="line">                visited[*it] = <span class="literal">true</span>;</span><br><span class="line">                q.push(*it);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="DFS"><a href="#DFS" class="headerlink" title="DFS"></a>DFS</h1><p>图的深度优先搜索（DFS）类似于树的前序遍历</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> id;</span><br><span class="line">    <span class="built_in">vector</span>&lt;Node *&gt; neighbors;</span><br><span class="line">    Node(<span class="keyword">int</span> id) : id(id) &#123;&#125;</span><br><span class="line">    Node() &#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(Node *root)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">map</span>&lt;Node *, <span class="keyword">bool</span>&gt; visited;</span><br><span class="line">    <span class="keyword">if</span> (visited.count(root))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    visited[root] = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; root-&gt;id &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">vector</span>&lt;Node *&gt;::iterator it = root-&gt;neighbors.begin(); it != root-&gt;neighbors.end(); it++)</span><br><span class="line">    &#123;</span><br><span class="line">        dfs(*it);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="最小生成树"><a href="#最小生成树" class="headerlink" title="最小生成树"></a>最小生成树</h1><h1 id="Prim算法（普利姆算法）"><a href="#Prim算法（普利姆算法）" class="headerlink" title="Prim算法（普利姆算法）"></a>Prim算法（普利姆算法）</h1><p>其基本思想是，寻找这样的边：满足“一个点在生成树中，一个点不在生成树中”的边中权值最小的一条边。将找到的边加入边集中，顶点加入到顶点集中，当所有顶点都加进来时，算法结束。</p>
+<p><img src="/2019/06/28/datastructuregraph/prim.jpg" alt="Prim"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MaxVertex = <span class="number">100</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">EdgeType</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> lowcost;</span><br><span class="line">    <span class="keyword">int</span> adjvex;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Graph</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> arc[MaxVertex][MaxVertex];</span><br><span class="line">    <span class="keyword">int</span> vertexNum;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">MinEdge</span><span class="params">(EdgeType shortEdge[], <span class="keyword">int</span> vertenNum)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> minEdge = INT8_MAX;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; vertenNum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (shortEdge[i].adjvex != <span class="number">0</span> &amp;&amp; minEdge &lt; shortEdge[i].lowcost)</span><br><span class="line">        &#123;</span><br><span class="line">            minEdge = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> minEdge;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Prim</span><span class="params">(Graph G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    EdgeType *shortEdge = <span class="keyword">new</span> EdgeType[G.vertexNum];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; G.vertexNum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        shortEdge[i].lowcost = G.arc[<span class="number">0</span>][i];</span><br><span class="line">        shortEdge[i].adjvex = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    shortEdge[<span class="number">0</span>].lowcost = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; G.vertexNum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> k = MinEdge(shortEdge, G.vertexNum);</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">'('</span> &lt;&lt; k &lt;&lt; <span class="string">')'</span> &lt;&lt; shortEdge[k].adjvex &lt;&lt; <span class="string">')'</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">        shortEdge[k].lowcost = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; G.vertexNum; ++j)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (G.arc[k][j] &lt; shortEdge[j].lowcost)</span><br><span class="line">            &#123;</span><br><span class="line">                shortEdge[j].lowcost = G.arc[k][j];</span><br><span class="line">                shortEdge[j].adjvex = k;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Prim算法的时间复杂度为O(n^2)，与图中的边数无关，适合求稠密图的最小生成树。</p>
+<hr>
+<h1 id="Kruskal算法（克鲁斯卡尔算法）"><a href="#Kruskal算法（克鲁斯卡尔算法）" class="headerlink" title="Kruskal算法（克鲁斯卡尔算法）"></a>Kruskal算法（克鲁斯卡尔算法）</h1><p>其基本思想是：每次从未标记的边中选取最小权值的边，如果该边的两个顶点位于两个不同的连通分量，则将该边加入最小生成树，合并两个连通分量，并标记该边。否则，位于同一个连通分量，则去掉该边（同样标记即可），避免造成回路。</p>
+<p><img src="/2019/06/28/datastructuregraph/Kruskal.jpg" alt="克鲁斯卡尔算法"></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MaxVertex = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MaxEdge = <span class="number">100</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">EdgeType</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> from, to;</span><br><span class="line">    <span class="keyword">int</span> weight;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">EdgeGraph</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> vertex[MaxVertex];</span><br><span class="line">    EdgeType edge[MaxEdge];</span><br><span class="line">    <span class="keyword">int</span> vertexNum, edgeNum;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">FindRoot</span><span class="params">(<span class="keyword">int</span> parent[], <span class="keyword">int</span> v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t = v;</span><br><span class="line">    <span class="keyword">if</span> (parent[t] != <span class="number">-1</span>)</span><br><span class="line">        t = parent[t];</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Kruskal</span><span class="params">(EdgeGraph G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> *parent = <span class="keyword">new</span> <span class="keyword">int</span>[G.vertexNum];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; G.vertexNum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        parent[i] = <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> num = <span class="number">0</span>, i = <span class="number">0</span>; i &lt; G.edgeNum; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> v1 = FindRoot(parent, G.edge[i].from);</span><br><span class="line">        <span class="keyword">int</span> v2 = FindRoot(parent, G.edge[i].to);</span><br><span class="line">        <span class="keyword">if</span> (v1 != v2)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">cout</span> &lt;&lt; <span class="string">'('</span> &lt;&lt; v1 &lt;&lt; <span class="string">','</span> &lt;&lt; v2 &lt;&lt; <span class="string">')'</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">            parent[v2] = v1;</span><br><span class="line">            num++;</span><br><span class="line">            <span class="keyword">if</span> (num == G.vertexNum - <span class="number">1</span>)</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="最短路径"><a href="#最短路径" class="headerlink" title="最短路径"></a>最短路径</h1><h2 id="Dijkstra算法（迪杰斯特拉算法）"><a href="#Dijkstra算法（迪杰斯特拉算法）" class="headerlink" title="Dijkstra算法（迪杰斯特拉算法）"></a>Dijkstra算法（迪杰斯特拉算法）</h2><p><img src="/2019/06/28/datastructuregraph/Dijkstra.gif" alt="Dijkstra"></p>
+<p>Dijkstra算法使用贪心策略，每一次添加一条边就更新顶点的最短路径值，贪心策略为每次选取值最小的点。Dijkstra用来求一个点到其余各点的最短距离，也叫做“单源最短距离”。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MaxNum = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> A[MaxNum][MaxNum];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Dijkstra</span><span class="params">(<span class="keyword">int</span> v, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> dist[MaxNum];</span><br><span class="line">    <span class="keyword">int</span> visited[MaxNum];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        dist[i] = A[v][i];</span><br><span class="line">        visited[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    visited[v] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n - <span class="number">1</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> minDis = INT8_MIN;</span><br><span class="line">        <span class="keyword">int</span> index;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= n; ++j)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (visited[j] == <span class="number">0</span> &amp;&amp; dist[j] &lt; minDis)</span><br><span class="line">            &#123;</span><br><span class="line">                minDis = dist[j];</span><br><span class="line">                index = j;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        visited[index] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= n; ++j)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (dist[j] &gt; dist[index] + A[index][j])</span><br><span class="line">            &#123;</span><br><span class="line">                dist[j] = dist[index] + A[index][j];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="Floyd算法（佛洛依德算法）"><a href="#Floyd算法（佛洛依德算法）" class="headerlink" title="Floyd算法（佛洛依德算法）"></a>Floyd算法（佛洛依德算法）</h2><p>Floyd算法用来计算图中任意一点到其他点的最短路径。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> MaxNum = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> A[MaxNum][MaxNum];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Dijkstra</span><span class="params">(<span class="keyword">int</span> v, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">1</span>; k &lt;= n; ++k)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= n; ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= n; ++j)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (A[j][j] &gt; A[i][k] + A[k][j])</span><br><span class="line">                &#123;</span><br><span class="line">                    A[i][j] = A[i][k] + A[k][j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
       
     </div>
     
@@ -417,8 +501,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -469,6 +562,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#图的表示方法"><span class="nav-number">2.</span> <span class="nav-text">图的表示方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组表示"><span class="nav-number">2.1.</span> <span class="nav-text">数组表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#邻接表"><span class="nav-number">2.2.</span> <span class="nav-text">邻接表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#十字链表"><span class="nav-number">2.3.</span> <span class="nav-text">十字链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#邻接多重表"><span class="nav-number">2.4.</span> <span class="nav-text">邻接多重表</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BFS"><span class="nav-number">3.</span> <span class="nav-text">BFS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DFS"><span class="nav-number">4.</span> <span class="nav-text">DFS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最小生成树"><span class="nav-number">5.</span> <span class="nav-text">最小生成树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Prim算法（普利姆算法）"><span class="nav-number">6.</span> <span class="nav-text">Prim算法（普利姆算法）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Kruskal算法（克鲁斯卡尔算法）"><span class="nav-number">7.</span> <span class="nav-text">Kruskal算法（克鲁斯卡尔算法）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最短路径"><span class="nav-number">8.</span> <span class="nav-text">最短路径</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dijkstra算法（迪杰斯特拉算法）"><span class="nav-number">8.1.</span> <span class="nav-text">Dijkstra算法（迪杰斯特拉算法）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Floyd算法（佛洛依德算法）"><span class="nav-number">8.2.</span> <span class="nav-text">Floyd算法（佛洛依德算法）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
