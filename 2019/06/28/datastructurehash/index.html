@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
 <meta property="og:description" content="介绍Hash函数及冲突">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-28T08:35:15.462Z">
+<meta property="og:updated_time" content="2019-06-28T10:13:02.042Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hash函数及冲突">
 <meta name="twitter:description" content="介绍Hash函数及冲突">
@@ -303,7 +303,7 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-28T16:35:15+08:00" content="2019-06-28">
+    <time itemprop="dateUpdated" datetime="2019-06-28T18:13:02+08:00" content="2019-06-28">
       2019-06-28
     </time>
   </span>
@@ -387,7 +387,7 @@
 <hr>
 <h2 id="建立公共溢出区"><a href="#建立公共溢出区" class="headerlink" title="建立公共溢出区"></a>建立公共溢出区</h2><p>这种方法的基本思想是：将哈希表分为基本表和溢出表两部分，凡是和基本表发生冲突的元素，一律填入溢出表。且溢出表也可采用同样的哈希函数，易于实现，可理解为一种递归形势的散列表。</p>
 <hr>
-<h2 id="开放定址和封闭定址"><a href="#开放定址和封闭定址" class="headerlink" title="开放定址和封闭定址"></a>开放定址和封闭定址</h2><p>开放地址：哈希表的每一个桶单元都有可能存放关键字，故称之为开放定址，其散列地址仅限于散列表所覆盖的范围之内，称之为封闭散列。</p>
+<h1 id="开放定址和封闭定址"><a href="#开放定址和封闭定址" class="headerlink" title="开放定址和封闭定址"></a>开放定址和封闭定址</h1><p>开放地址：哈希表的每一个桶单元都有可能存放关键字，故称之为开放定址，其散列地址仅限于散列表所覆盖的范围之内，称之为封闭散列。</p>
 <ul>
 <li>优点：<ul>
 <li>记录更容易进行序列化（serialize）操作；</li>
@@ -572,7 +572,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash表"><span class="nav-number">1.</span> <span class="nav-text">Hash表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#装填因子"><span class="nav-number">2.</span> <span class="nav-text">装填因子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash函数设计原则"><span class="nav-number">3.</span> <span class="nav-text">Hash函数设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#除余法"><span class="nav-number">3.1.</span> <span class="nav-text">除余法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAD法"><span class="nav-number">3.2.</span> <span class="nav-text">MAD法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#伪随机数法"><span class="nav-number">3.3.</span> <span class="nav-text">伪随机数法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash冲突解决办法"><span class="nav-number">4.</span> <span class="nav-text">Hash冲突解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#开放定址法"><span class="nav-number">4.1.</span> <span class="nav-text">开放定址法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性探测再散列"><span class="nav-number">4.1.1.</span> <span class="nav-text">线性探测再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二次探测再散列"><span class="nav-number">4.1.2.</span> <span class="nav-text">二次探测再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伪随即探测再散列"><span class="nav-number">4.1.3.</span> <span class="nav-text">伪随即探测再散列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再哈希法"><span class="nav-number">4.2.</span> <span class="nav-text">再哈希法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链地址法"><span class="nav-number">4.3.</span> <span class="nav-text">链地址法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立公共溢出区"><span class="nav-number">4.4.</span> <span class="nav-text">建立公共溢出区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开放定址和封闭定址"><span class="nav-number">4.5.</span> <span class="nav-text">开放定址和封闭定址</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash表"><span class="nav-number">1.</span> <span class="nav-text">Hash表</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#装填因子"><span class="nav-number">2.</span> <span class="nav-text">装填因子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash函数设计原则"><span class="nav-number">3.</span> <span class="nav-text">Hash函数设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#除余法"><span class="nav-number">3.1.</span> <span class="nav-text">除余法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MAD法"><span class="nav-number">3.2.</span> <span class="nav-text">MAD法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#伪随机数法"><span class="nav-number">3.3.</span> <span class="nav-text">伪随机数法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hash冲突解决办法"><span class="nav-number">4.</span> <span class="nav-text">Hash冲突解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#开放定址法"><span class="nav-number">4.1.</span> <span class="nav-text">开放定址法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线性探测再散列"><span class="nav-number">4.1.1.</span> <span class="nav-text">线性探测再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二次探测再散列"><span class="nav-number">4.1.2.</span> <span class="nav-text">二次探测再散列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伪随即探测再散列"><span class="nav-number">4.1.3.</span> <span class="nav-text">伪随即探测再散列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再哈希法"><span class="nav-number">4.2.</span> <span class="nav-text">再哈希法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链地址法"><span class="nav-number">4.3.</span> <span class="nav-text">链地址法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#建立公共溢出区"><span class="nav-number">4.4.</span> <span class="nav-text">建立公共溢出区</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开放定址和封闭定址"><span class="nav-number">5.</span> <span class="nav-text">开放定址和封闭定址</span></a></li></ol></div>
             
 
           </div>
