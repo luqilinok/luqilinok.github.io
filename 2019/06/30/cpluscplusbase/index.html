@@ -412,7 +412,7 @@
 <p>3.应对硬件的设置（机器类型等）；</p>
 <p>4.条件编译功能if也可以实现，但条件编译可以减少被编译语句，从而减少目标程序的大小；</p>
 <hr>
-<h2 id="14-区分以下几种变量？"><a href="#14-区分以下几种变量？" class="headerlink" title="14.区分以下几种变量？"></a>14.区分以下几种变量？</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> a</span><br><span class="line"><span class="keyword">int</span> <span class="keyword">const</span> a</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *a</span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> a</span><br></pre></td></tr></table></figure>
+<h2 id="14-区分以下几种变量？"><a href="#14-区分以下几种变量？" class="headerlink" title="14.区分以下几种变量？"></a>14.区分以下几种变量？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">const int a</span><br><span class="line">int const a</span><br><span class="line">const int *a</span><br><span class="line">int *const a</span><br></pre></td></tr></table></figure>
 <p>1.int const a 和 const int a均表示常量类型a</p>
 <p>2.const int *a，常量指针，其中a是指向const int的变量指针，a的值可以变化</p>
 <p>3.int *const a，指针常量，表示a是指向int变量的指针，但a的值不能发生变化。</p>
@@ -424,13 +424,13 @@
 <p>3.原变量值可以通过原名修改；</p>
 <p>4.常引用通常用作只读变量别名或是形参传递。</p>
 <hr>
-<h2 id="17-区分以下指针类型？"><a href="#17-区分以下指针类型？" class="headerlink" title="17.区分以下指针类型？"></a>17.区分以下指针类型？</h2><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *p[<span class="number">10</span>];</span><br><span class="line"><span class="keyword">int</span> (*p)[<span class="number">10</span>];</span><br><span class="line"><span class="keyword">int</span> *p(<span class="keyword">int</span>)</span><br><span class="line"><span class="keyword">int</span> (*p)(<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="17-区分以下指针类型？"><a href="#17-区分以下指针类型？" class="headerlink" title="17.区分以下指针类型？"></a>17.区分以下指针类型？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int *p[10];</span><br><span class="line">int (*p)[10];</span><br><span class="line">int *p(int)</span><br><span class="line">int (*p)(int)</span><br></pre></td></tr></table></figure>
 <p>1.int *p[10]表示指针数组，是一个数组变量，大小为10，数组内的元素指向int类型的指针变量；</p>
 <p>2.int (*p)[10]表示数组指针，是指针类型，指向的是一个int类型的数组，这个数组的大小是10；</p>
 <p>3.int <em>p(int)是函数声明，函数名是p，参数类型是int，返回值是int类型的指针（int </em>）；</p>
 <p>4.int (*p)(int)是函数指针，是指针类型，指向的具有int参数，返回值是int的函数。</p>
 <hr>
-<h2 id="18-a和-amp-a有什么区别？"><a href="#18-a和-amp-a有什么区别？" class="headerlink" title="18.a和&amp;a有什么区别？"></a>18.a和&amp;a有什么区别？</h2><figure class="highlight ocaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">假设数组<span class="built_in">int</span> a[<span class="number">10</span>]</span><br><span class="line"><span class="built_in">int</span> <span class="comment">(*p)[10] = &amp;a</span></span><br></pre></td></tr></table></figure>
+<h2 id="18-a和-amp-a有什么区别？"><a href="#18-a和-amp-a有什么区别？" class="headerlink" title="18.a和&amp;a有什么区别？"></a>18.a和&amp;a有什么区别？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">假设数组int a[10]</span><br><span class="line">int (*p)[10] = &amp;a</span><br></pre></td></tr></table></figure>
 <p>1.a是数组名，是数组首元素的地址，+1表示地址值加上一个int类型的大小，*（a+1）=a[1];</p>
 <p>2.&amp;a是数组的地址，其类型为int(*)[10]（就是前面提到的数组指针），其加1时，系统会认为是数组首地址加上整个数组的偏移（10个int型的变量），值为数组a尾元素后一个元素的地址；</p>
 <p>3.若（int<em>）p,此时输出 </em>p时，其值为a[0]的值，因为被转为int *类型，解引用时按照int类型大小来读取。</p>
@@ -477,7 +477,7 @@
 <h2 id="2-链接"><a href="#2-链接" class="headerlink" title="2.链接"></a>2.链接</h2><p>各个源代码模块独立的被编译，然后将他们组装起来成为一个整体，组装的过程就是链接。被链接的各个部分本本身就是二进制文件，所以在被链接时需要将所有目标文件的代码段拼接在一起，然后将所有对符号地址的引用加以修正。</p>
 <ul>
 <li><p>静态链接<br>静态链接最简单的情况就是在编译时和静态库链接在一起成为完整的可执行程序。这里所说的静态库就是对多个目标文件（.o）文件的打包，通常静态链接的包名为lib<em>**</em>.a，静态链接所有被用到的目标文件都会复制到最终生成的可执行目标文件中。这种方式的好处是在运行时，可执行目标文件已经完全装载完毕，只要按指令序执行即可，速度比较快，但缺点也有很多。<br>打包命令：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -c test1.c</span><br><span class="line">gcc -c test2.c</span><br><span class="line">ar cr libtest<span class="selector-class">.a</span> test1<span class="selector-class">.o</span> test2.o</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -c test1.c</span><br><span class="line">gcc -c test2.c</span><br><span class="line">ar cr libtest.a test1.o test2.o</span><br></pre></td></tr></table></figure>
 <p>首先编译得到test1.o和test2.o两个目标文件，之后通过ar命令将这两个文件打包为.a文件，文件名格式为lib + 静态库名 + .a后缀。在生成可执行文件需要使用到它的时候只需要在编译时加上即可。需要注意的是，使用静态库时加在最后的名字不是libtest.a，而是l + 静态库名。</p>
 </li>
 </ul>
@@ -486,9 +486,9 @@
 <li>动态链接<br>静态链接发生于编译阶段，加载至内存前已经完整，但缺点是如果多个程序都需要使用某个静态库，则该静态库会在每个程序中都拷贝一份，非常浪费内存资源，所以出现了动态链接的方式来解决这个问题。</li>
 </ul>
 <p>动态链接在形式上倒是和静态链接非常相似，首先也是需要打包，打包成动态库，不过文件名格式为lib + 动态库名 + .so后缀。不过动态库的打包不需要使用ar命令，gcc就可以完成，但要注意在编译时要加上-fPIC选项，打包时加上-shared选项。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -c test1.c</span><br><span class="line">gcc -fPIC -c test2.c</span><br><span class="line">gcc -shared test1<span class="selector-class">.o</span> test2<span class="selector-class">.o</span> -o libtest.so</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -c test1.c</span><br><span class="line">gcc -fPIC -c test2.c</span><br><span class="line">gcc -shared test1.o test2.o -o libtest.so</span><br></pre></td></tr></table></figure>
 <p>使用动态链接的用法和静态链接相同。</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main mian<span class="selector-class">.c</span> -ltest</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o main mian.c -ltest</span><br></pre></td></tr></table></figure>
 <p>如果仅仅像上面的步骤是没有办法正常使用库的，我们可以通过加-Lpath指定搜索库文件的目录（-L.表示当前目录），默认情况下会到环境变量LD_LIBRARY_PATH指定的目录下搜索库文件，默认情况是/usr/lib，我们可以将库文件拷贝到那个目录下再链接。</p>
 <p>静态库和动态库的优缺点：</p>
 <ul>
@@ -609,7 +609,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">34</span>
+                  <span class="site-state-item-count">35</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
