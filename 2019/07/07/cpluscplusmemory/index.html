@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="动机在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
+<meta name="description" content="详解C/C++的内存布局，以及C++对象内存布局，以及C和C++内存布局之间有什么区别。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="模板方法">
-<meta property="og:url" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/index.html">
+<meta property="og:title" content="C&#x2F;C++内存布局策略详解">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/07/cpluscplusmemory/index.html">
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
-<meta property="og:description" content="动机在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
+<meta property="og:description" content="详解C/C++的内存布局，以及C++对象内存布局，以及C和C++内存布局之间有什么区别。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/designpatterntemlatemethod.png">
-<meta property="og:updated_time" content="2019-06-22T12:06:27.637Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/07/07/cpluscplusmemory/c-memory.png">
+<meta property="og:updated_time" content="2019-07-07T07:20:47.027Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="模板方法">
-<meta name="twitter:description" content="动机在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/designpatterntemlatemethod.png">
+<meta name="twitter:title" content="C&#x2F;C++内存布局策略详解">
+<meta name="twitter:description" content="详解C/C++的内存布局，以及C++对象内存布局，以及C和C++内存布局之间有什么区别。">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/07/07/cpluscplusmemory/c-memory.png">
 
 
 
@@ -121,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/">
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/07/cpluscplusmemory/">
 
 
 
 
 
-  <title>模板方法 | Lu QiLin's Blog</title>
+  <title>C/C++内存布局策略详解 | Lu QiLin's Blog</title>
   
 
 
@@ -264,7 +264,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/06/21/designpatterntemplatemethod/">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/07/cpluscplusmemory/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="LuQiLin">
@@ -281,7 +281,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">模板方法</h1>
+          <h1 class="post-title" itemprop="name headline">C/C++内存布局策略详解</h1>
         
 
         <div class="post-meta">
@@ -293,8 +293,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-06-21T08:16:51+08:00">
-                2019-06-21
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-07T14:58:55+08:00">
+                2019-07-07
               </time>
             
 
@@ -305,8 +305,8 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-06-22T20:06:27+08:00" content="2019-06-22">
-      2019-06-22
+    <time itemprop="dateUpdated" datetime="2019-07-07T15:20:47+08:00" content="2019-07-07">
+      2019-07-07
     </time>
   </span>
 
@@ -360,18 +360,42 @@
       
 
       
-        <h1 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h1><p>在软件构建过程中，对于某一项任务，它常常有稳定的整体操作结构，但各个子步骤却又很多改变的需求，或者由于固有的原因（比如框架与应用之间的关系）而无法和任务的整体结构同时实现。<br>如何在确定稳定操作结构的前提下，来灵活对应各个子步骤的变化或者晚期实现需求？</p>
+        <p>详解C/C++的内存布局，以及C++对象内存布局，以及C和C++内存布局之间有什么区别。</p>
 <a id="more"></a>
-<h1 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h1><p>定义一个操作中的算法的骨架（稳定），而将一些步骤延迟（变化）到子类中。Template Method使得子类可以不改变（复用）一个算法的结构即可重定义（override重写）该算法的某些特定步骤</p>
-<p>​                                                             –《设计模式》GoF</p>
 <hr>
-<h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p><img src="/2019/06/21/designpatterntemplatemethod/designpatterntemlatemethod.png" alt="模板方法"></p>
+<h1 id="C程序内存布局"><a href="#C程序内存布局" class="headerlink" title="C程序内存布局"></a>C程序内存布局</h1><p><img src="/2019/07/07/cpluscplusmemory/c-memory.png" alt></p>
+<p>主要分为以下几部分组成：</p>
+<p>​    · 代码段</p>
+<p>​    · 初始化数据段（数据段）</p>
+<p>​    · 未初始化数据段</p>
+<p>​    · 堆</p>
+<p>​    · 栈</p>
+<p>下面分别来介绍各部分的作用：</p>
 <hr>
-<h1 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类库</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Libary</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		step1();</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (step2()) &#123; <span class="comment">// 动态绑定</span></span><br><span class="line">			step3();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; ++i) &#123;</span><br><span class="line">			step4(); <span class="comment">// 动态绑定</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step1"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step3"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">bool</span> <span class="title">step2</span><span class="params">()</span> </span>= <span class="number">0</span>; <span class="comment">// 纯虚函数</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">step4</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 应用开发人员</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Application</span> :</span> <span class="keyword">public</span> Libary &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">step2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">step4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"step4"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	Libary* libary = <span class="keyword">new</span> Application;</span><br><span class="line">	libary-&gt;run();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="代码段"><a href="#代码段" class="headerlink" title="代码段"></a>代码段</h2><p>代码段是由程序中的机器代码组成的，在C语言中，程序经过编译后，形成机器代码。在执行的过程中，CPU的程序计数器指向代码段中的一条指令，依次执行。</p>
 <hr>
-<h1 id="要点总结"><a href="#要点总结" class="headerlink" title="要点总结"></a>要点总结</h1><p>1.Template Method模式是一种非常基础性的设计模式，在面向对象系统中有着大量的应用。它用最简洁的机制（虚函数的多态性）为很多应用程序框架提供了灵活的扩展点，是代码复用方面的基本实现结构。</p>
-<p>2.除了可以灵活应对子步骤的变化外，“不要调用我，让我来调用你”的反向控制结构是Template Method的典型应用</p>
-<p>3.在具体实现方面，被Template Method调用的虚方法可以具有实现，也可以没有任何实现（抽象方法、纯虚方法），但一般推荐将它们设置为protected方法。</p>
+<h2 id="初始化数据段"><a href="#初始化数据段" class="headerlink" title="初始化数据段"></a>初始化数据段</h2><p>初始化数据段中数据又可以分为<strong>只读数据段</strong>和<strong>读写数据段</strong>：</p>
+<p>（1）只读数据段是程序使用的一些不会被更改的数据，比如字面值常量，由于这些变量不需要修改，因此只需放置在只读寄存器中即可。</p>
+<p>（2）读写数据段放置的是在程序中声明的，具有初始值的变量，比如已初始化的全局变量和静态变量。</p>
+<hr>
+<h2 id="未初始化数据段（BSS段）"><a href="#未初始化数据段（BSS段）" class="headerlink" title="未初始化数据段（BSS段）"></a>未初始化数据段（BSS段）</h2><p>未初始化数据段也称为BSS段，即Block Started by Symbol，在BSS段中存放的数据都是未被初始化的全局变量和静态变量，并默认会把这部分数据初始化为0.</p>
+<hr>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><p>堆是动态内存分配区，向高地址增长，堆中分配内存和释放内存需要调用malloc/new或free/delete。</p>
+<hr>
+<h2 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h2><p>栈和堆一般相邻，但沿着相反的方向增长。当栈指针和堆指针相等就说明栈内内存耗尽。栈中保存的是局部变量和每次函数调用时的信息。每次函数调用返回地址，一些调用者环境信息（比如寄存器）都被存放在栈中。然后新调用的函数就会在栈中为它们的自动或者临时变量分配内存空间，这就是C中递归函数调用的过程。每次递归函数调用自己，新的堆栈就会被创建，这样新的变量集合就不会被其他函数实例的变量集合影响了。</p>
+<hr>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> ro[] = &#123;<span class="string">"only read data area"</span>&#125;; <span class="comment">// 初始化只读存储区</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> rw = &#123;<span class="string">"read write data area"</span>&#125;; <span class="comment">// 初始化读写数据段</span></span><br><span class="line"><span class="keyword">char</span> bss[<span class="number">100</span>];                             <span class="comment">// BSS段</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *pstrconst = <span class="string">"constant data"</span>;   <span class="comment">// 初始化只读存储区</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;                                          <span class="comment">// 命令行参数防止在栈地址上的命令行参数空间中</span></span><br><span class="line">    <span class="keyword">int</span> a;                                 <span class="comment">// 栈上</span></span><br><span class="line">    <span class="keyword">char</span> a[<span class="number">100</span>];                           <span class="comment">// 栈</span></span><br><span class="line">    <span class="keyword">char</span> *c = <span class="string">"abcdef"</span>;                    <span class="comment">// c在栈上，"abcdef"在只读存储区，占7个字节</span></span><br><span class="line">    <span class="keyword">char</span> *p;                               <span class="comment">// 栈</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> rw2 = <span class="number">0</span>;                    <span class="comment">// 初始化读写数据段</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">char</span> bss2[<span class="number">100</span>];                 <span class="comment">// BSS段</span></span><br><span class="line">    p = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">char</span>)); <span class="comment">// 在堆上分配10个字节</span></span><br><span class="line">    <span class="built_in">free</span>(p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="C-程序内存布局"><a href="#C-程序内存布局" class="headerlink" title="C++程序内存布局"></a>C++程序内存布局</h1><p>有关C++的内存布局，网上基本上都是按照C程序的内存布局来讲解，这其实是错误的，C程序和C++程序的内存布局是不一样的，在C++中内存可以分为以下5个部分：</p>
+<p>​    · 代码段：这部分与C程序是大致相同的；</p>
+<p>​    · 常量存储区：这部分存储的内容与C语言中初始化数据段中的只读数据段是一样的，用来存储C++常量；</p>
+<p>​    · 全局/静态存储区：在C++中，不再区分数据段和BSS段，未初始化和初始化的全局/静态变量都会存储在这里，并且初始化为0；</p>
+<p>​    · 堆：堆又分为new分配的存储区和malloc分配的内存块，new分配的存储区在程序结束之后，系统会帮助我们清理；</p>
+<p>​    · 栈：栈和C程序的栈相同。</p>
+<p>C和C++的内存布局大致上是相同的，主要区别在于C++引进了对象，C++对象中的成员函数存储在代码段中，数据成员才会存储在栈中，同样静态变量会存储在在全局/静态存储区，并且必须初始化。当然C++对象内存布局会涉及到继承，多态而出现多种变化，以及内存对齐的影响，对于这部分的内容参考：</p>
+<p><a href="/2019/07/07/cpluscplusmemorypack/">内存对齐策略</a></p>
+<p>C++之继承</p>
+<p>C++之多态</p>
 
       
     </div>
@@ -396,8 +420,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/06/20/designpattern/" rel="next" title="面向对象与设计模式">
-                <i class="fa fa-chevron-left"></i> 面向对象与设计模式
+              <a href="/2019/07/07/cpluscplusmemorypack/" rel="next" title="C/C++内存对齐策略">
+                <i class="fa fa-chevron-left"></i> C/C++内存对齐策略
               </a>
             
           </div>
@@ -405,10 +429,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/06/21/designpatternstrategy/" rel="prev" title="策略模式">
-                策略模式 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -531,7 +551,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#动机"><span class="nav-number">1.</span> <span class="nav-text">动机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模式定义"><span class="nav-number">2.</span> <span class="nav-text">模式定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结构"><span class="nav-number">3.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码示例"><span class="nav-number">4.</span> <span class="nav-text">代码示例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#要点总结"><span class="nav-number">5.</span> <span class="nav-text">要点总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C程序内存布局"><span class="nav-number">1.</span> <span class="nav-text">C程序内存布局</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码段"><span class="nav-number">1.1.</span> <span class="nav-text">代码段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初始化数据段"><span class="nav-number">1.2.</span> <span class="nav-text">初始化数据段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未初始化数据段（BSS段）"><span class="nav-number">1.3.</span> <span class="nav-text">未初始化数据段（BSS段）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#堆"><span class="nav-number">1.4.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#栈"><span class="nav-number">1.5.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-number">1.6.</span> <span class="nav-text">实例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-程序内存布局"><span class="nav-number">2.</span> <span class="nav-text">C++程序内存布局</span></a></li></ol></div>
             
 
           </div>
