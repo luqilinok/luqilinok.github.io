@@ -86,12 +86,12 @@
 <meta property="og:site_name" content="Lu QiLin&#39;s Blog">
 <meta property="og:description" content="其实，要想说清楚类型转换并不是一件容易的事，类型转换可能会发生在每一个代码中，有时候是无知觉的，总的来说C++的类型转换分为隐式类型转换和显示类型转换。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://luqilinok.github.io/2019/07/07/cpluscplustypeswitch/img/typeswitch.png">
-<meta property="og:updated_time" content="2019-07-07T06:08:33.153Z">
+<meta property="og:image" content="http://luqilinok.github.io/2019/07/07/cpluscplustypeswitch/typeswitch.png">
+<meta property="og:updated_time" content="2019-07-07T06:18:50.301Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++之类型转换详解">
 <meta name="twitter:description" content="其实，要想说清楚类型转换并不是一件容易的事，类型转换可能会发生在每一个代码中，有时候是无知觉的，总的来说C++的类型转换分为隐式类型转换和显示类型转换。">
-<meta name="twitter:image" content="http://luqilinok.github.io/2019/07/07/cpluscplustypeswitch/img/typeswitch.png">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/07/07/cpluscplustypeswitch/typeswitch.png">
 
 
 
@@ -305,7 +305,7 @@
           
   <span class="post-updated">
     &nbsp; | &nbsp; 更新于
-    <time itemprop="dateUpdated" datetime="2019-07-07T14:08:33+08:00" content="2019-07-07">
+    <time itemprop="dateUpdated" datetime="2019-07-07T14:18:50+08:00" content="2019-07-07">
       2019-07-07
     </time>
   </span>
@@ -375,7 +375,7 @@
 <li>所有的浮点运算都是以双精度进行的，即使运算中只有 float 类型，也要先转换为 double 类型，才能进行运算；</li>
 <li>char 和 short 参与运算时，必须先转换成 int 类型。</li>
 </ul>
-<p><a href><img src="/2019/07/07/cpluscplustypeswitch/img/typeswitch.png" alt="类型转换"></a></p>
+<p><img src="/2019/07/07/cpluscplustypeswitch/typeswitch.png" alt></p>
 <hr>
 <h2 id="强制类型转换"><a href="#强制类型转换" class="headerlink" title="强制类型转换"></a>强制类型转换</h2><p>自动类型转换是编译器默默地、隐式地进行的一种类型转换，不需要在代码中体现出来；强制类型转换是程序员明确提出的、需要通过特定格式的代码来指明的一种类型转换。换句话说，自动类型转换不需要程序员干预，强制类型转换必须有程序员干预。<br>强制类型转换的格式为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(type_name) expression</span><br></pre></td></tr></table></figure>
