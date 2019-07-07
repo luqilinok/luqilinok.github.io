@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C++面向对象基础面试题收录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++之面向对象基础">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/07/cpluscplusorientedbase/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="C++面向对象基础面试题收录">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-07T12:23:52.978Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++之面向对象基础">
+<meta name="twitter:description" content="C++面向对象基础面试题收录">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/07/cpluscplusorientedbase/">
+
+
+
+
+
+  <title>C++之面向对象基础 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/07/cpluscplusorientedbase/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++之面向对象基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-07T15:28:05+08:00">
+                2019-07-07
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-07T20:23:52+08:00" content="2019-07-07">
+      2019-07-07
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>C++面向对象基础面试题收录</p>
+<a id="more"></a>
+<hr>
+<h1 id="面向对象三大特性"><a href="#面向对象三大特性" class="headerlink" title="面向对象三大特性"></a>面向对象三大特性</h1><p>​    · 封装性：数据和方法封装在一起，能够避免外界干扰和不确定访问。</p>
+<p>​    · 继承性：让某个类型的对象获得另一个对象的属性和方法。</p>
+<p>​    · 多态性：是指一个类实例的相同方法在不同情形有不同表现形式（重载实现编译时多态，虚函数实现运行时多态）</p>
+<hr>
+<h1 id="C语言实现面向对象编程"><a href="#C语言实现面向对象编程" class="headerlink" title="C语言实现面向对象编程"></a>C语言实现面向对象编程</h1><p>面向对象是一种编程思想，C++/Java原生支持这种特性，但通过C语言也是可以实现面向对象编程的。在Linux内核中就有很多面向对象的方法，在面向对象中，主要特性有：封装、继承、多态。用C语言实现封装可以用struct来实现，对对象的基本操作进行抽象，形成基类，定义基本属性和方法，操作方法通过函数指针来实现，子类包含基类来实现继承，子类实现各自的操作函数体现多态特性。</p>
+<hr>
+<h1 id="public-protected-private区别"><a href="#public-protected-private区别" class="headerlink" title="public/protected/private区别"></a>public/protected/private区别</h1><p>​    1.public的变量和函数在类的外部和内部都可以访问；</p>
+<p>​    2.protected的变量和函数只能在类的内部和其派生类中访问；</p>
+<p>​    3.private修饰的元素只能在类内访问。</p>
+<hr>
+<h1 id="C-空类有哪些成员函数"><a href="#C-空类有哪些成员函数" class="headerlink" title="C++空类有哪些成员函数"></a>C++空类有哪些成员函数</h1><p>​    · 空类大小为1字节</p>
+<p>​    · 默认函数有：</p>
+<p>​            · 默认构造函数</p>
+<p>​            · 默认拷贝构造函数</p>
+<p>​            · 默认析构函数</p>
+<p>​            · 赋值函数</p>
+<p>​            · 取地址符</p>
+<p>​            · 取地址符const</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Empty</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Empty() &#123;&#125;  <span class="comment">//构造函数</span></span><br><span class="line">    Empty(<span class="keyword">const</span> Empty &amp;) &#123;&#125;  <span class="comment">//拷贝构造函数</span></span><br><span class="line">    ~Empty() &#123;&#125;  <span class="comment">//析构函数</span></span><br><span class="line">    Empty &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> Empty &amp;) &#123;&#125;  <span class="comment">//赋值函数</span></span><br><span class="line">    Empty *<span class="keyword">operator</span>&amp;() &#123;&#125;  <span class="comment">//取地址符</span></span><br><span class="line">    <span class="keyword">const</span> Empty *<span class="keyword">operator</span>&amp;() <span class="keyword">const</span> &#123;&#125;  <span class="comment">//取地址符const</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="构造函数是否为虚函数？析构函数呢？"><a href="#构造函数是否为虚函数？析构函数呢？" class="headerlink" title="构造函数是否为虚函数？析构函数呢？"></a>构造函数是否为虚函数？析构函数呢？</h1><p>​    · 构造函数：构造函数不能是虚函数，创建类对象时，首先会创建基类对象，调用基类的构造函数，如果构造函数是虚函数，要通过虚函数指针判断执行的是父类函数还是子类函数，而对象还没有创建，所以不存在虚函数指针。</p>
+<p>​    · 析构函数：析构函数可以是虚函数，而且一般都是虚函数，这样delete释放子类的时候，父类的析构函数才能够被调用</p>
+<hr>
+<h1 id="构造函数调用顺序？析构函数呢？"><a href="#构造函数调用顺序？析构函数呢？" class="headerlink" title="构造函数调用顺序？析构函数呢？"></a>构造函数调用顺序？析构函数呢？</h1><p>​    · 构造函数调用顺序：先调用基类，如果有多个基类，按照初始化顺序进行调用，之后调用组合类的构造函数，最后调用派生类的构造函数。</p>
+<p>​    · 析构函数调用顺序：析构函数的调用顺序和构造函数的调用顺序刚好相反。</p>
+<hr>
+<h1 id="构造函数中深拷贝和浅拷贝的区别？"><a href="#构造函数中深拷贝和浅拷贝的区别？" class="headerlink" title="构造函数中深拷贝和浅拷贝的区别？"></a>构造函数中深拷贝和浅拷贝的区别？</h1><p>​    · 深拷贝：被拷贝对象在动态分配的内存空间时，需要动态申请另一块存储空间，然后逐个字节进行拷贝</p>
+<p>​    · 浅拷贝：浅拷贝时仅仅拷贝指针字面值，如果原来对象的调用析构函数释放指针的数据，会出现孔宣指针。</p>
+<hr>
+<h1 id="拷贝构造函数和拷贝赋值运算符的区别？"><a href="#拷贝构造函数和拷贝赋值运算符的区别？" class="headerlink" title="拷贝构造函数和拷贝赋值运算符的区别？"></a>拷贝构造函数和拷贝赋值运算符的区别？</h1><p>​    ·    拷贝构造函数是函数，赋值运算符是运算符重载</p>
+<p>​    ·    拷贝构造函数会生成新的类，赋值运算符不能</p>
+<p>​    ·    拷贝构造函数直接构造一个新的类对象，所以在初始化对象前不需要检查源对象和新建对象是否相同；赋值运算符要检查源对象和被赋值对象是否相同，另外赋值运算符中如果原来的对象有内存分配需要将原来的内存释放掉。</p>
+<hr>
+<h1 id="重载、覆盖和隐藏的区别"><a href="#重载、覆盖和隐藏的区别" class="headerlink" title="重载、覆盖和隐藏的区别"></a>重载、覆盖和隐藏的区别</h1><p>​    · 重载：在同一类中，具有相同函数名但是形参列表不同的两个函数，当调用函数时根据传递的参数列表来确定具体调用哪个函数。</p>
+<p>​    · 覆盖：在子类中重新定义的函数，其函数名、参数列表和返回值和父类完全相同，只有函数体不同。子类对象会根据对象类型调用相应的函数。</p>
+<p>​    · 隐藏：子类屏蔽了与其同名的函数，只要名字相同就会发生隐藏，应该避免。</p>
+<hr>
+<h1 id="哪几种情况会用到初始化成员列表？"><a href="#哪几种情况会用到初始化成员列表？" class="headerlink" title="哪几种情况会用到初始化成员列表？"></a>哪几种情况会用到初始化成员列表？</h1><p>​    · 初始化一个const成员</p>
+<p>​    · 初始化一个引用成员</p>
+<p>​    · 调用一个基类的构造函数</p>
+<p>​    · 调用一个数据成员对象的构造函数</p>
+<hr>
+<h1 id="类模板和模板类"><a href="#类模板和模板类" class="headerlink" title="类模板和模板类"></a>类模板和模板类</h1><p>​    · 类模板：用于解决功能相同、数据类型不同的类重复定义的问题，使用template关键字和类型标识符T创建类模板</p>
+<p>​    · 模板类：类模板根据具体的类型实例化的类，称之为模板类，编译器会为不同类型的类模板实例化不同的对象。</p>
+<hr>
+<h1 id="C-中哪些函数不能加上关键字inline？"><a href="#C-中哪些函数不能加上关键字inline？" class="headerlink" title="C++中哪些函数不能加上关键字inline？"></a>C++中哪些函数不能加上关键字inline？</h1><p>​    · 包含了递归、循环的函数</p>
+<p>​    · 虚函数不会被内联</p>
+<p>​    · 构造和析构函数一般不会内联</p>
+<p>​    · 内联函数调用了其他函数也不会被内联</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/07/cpluscplusmemory/" rel="next" title="C/C++内存布局策略详解">
+                <i class="fa fa-chevron-left"></i> C/C++内存布局策略详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#面向对象三大特性"><span class="nav-number">1.</span> <span class="nav-text">面向对象三大特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C语言实现面向对象编程"><span class="nav-number">2.</span> <span class="nav-text">C语言实现面向对象编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#public-protected-private区别"><span class="nav-number">3.</span> <span class="nav-text">public/protected/private区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-空类有哪些成员函数"><span class="nav-number">4.</span> <span class="nav-text">C++空类有哪些成员函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构造函数是否为虚函数？析构函数呢？"><span class="nav-number">5.</span> <span class="nav-text">构造函数是否为虚函数？析构函数呢？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构造函数调用顺序？析构函数呢？"><span class="nav-number">6.</span> <span class="nav-text">构造函数调用顺序？析构函数呢？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构造函数中深拷贝和浅拷贝的区别？"><span class="nav-number">7.</span> <span class="nav-text">构造函数中深拷贝和浅拷贝的区别？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#拷贝构造函数和拷贝赋值运算符的区别？"><span class="nav-number">8.</span> <span class="nav-text">拷贝构造函数和拷贝赋值运算符的区别？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重载、覆盖和隐藏的区别"><span class="nav-number">9.</span> <span class="nav-text">重载、覆盖和隐藏的区别</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#哪几种情况会用到初始化成员列表？"><span class="nav-number">10.</span> <span class="nav-text">哪几种情况会用到初始化成员列表？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#类模板和模板类"><span class="nav-number">11.</span> <span class="nav-text">类模板和模板类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#C-中哪些函数不能加上关键字inline？"><span class="nav-number">12.</span> <span class="nav-text">C++中哪些函数不能加上关键字inline？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
