@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="消息队列可以认为是一个消息列表，消息队列是随着内核持续的，本文主要介绍System V的消息队列相关概念和使用方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System V 消息队列">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="消息队列可以认为是一个消息列表，消息队列是随着内核持续的，本文主要介绍System V的消息队列相关概念和使用方法。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/msg_kernel.png">
+<meta property="og:image" content="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/msg_msgget.png">
+<meta property="og:updated_time" content="2019-07-12T01:21:17.568Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="System V 消息队列">
+<meta name="twitter:description" content="消息队列可以认为是一个消息列表，消息队列是随着内核持续的，本文主要介绍System V的消息队列相关概念和使用方法。">
+<meta name="twitter:image" content="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/msg_kernel.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/">
+
+
+
+
+
+  <title>System V 消息队列 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/12/linuxmessagequeue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">System V 消息队列</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-12T09:12:01+08:00">
+                2019-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-12T09:21:17+08:00" content="2019-07-12">
+      2019-07-12
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>消息队列可以认为是一个消息列表，消息队列是随着内核持续的，本文主要介绍System V的消息队列相关概念和使用方法。</p>
+<a id="more"></a>
+<hr>
+<h1 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h1><ul>
+<li>消息队列提供了一个从一个进程向另一个进程发送一块数据的方法</li>
+<li>每个数据块都被认为是有一个类型，接受者进程接受的数据块可以有不同的类型值</li>
+<li>消息队列也有管道一样的不足，解释每个消息的最大长度是有上限的（MSGMAX），每个消息队列总的字节数是有上限的（MSGMNB），系统上消息队列的总数也有一个上限（MSGMNI）</li>
+</ul>
+<hr>
+<h1 id="IPC对象数据结构"><a href="#IPC对象数据结构" class="headerlink" title="IPC对象数据结构"></a>IPC对象数据结构</h1><ul>
+<li>内核为每个IPC对象维护一个数据结构</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">key_t</span> _key;          <span class="comment">/*Key supplied to xxxget*/</span></span><br><span class="line">    <span class="keyword">uid_t</span> uid;           <span class="comment">/* Effective UID of owner*/</span></span><br><span class="line">    <span class="keyword">uid_t</span> gid;           <span class="comment">/* Effective GID of owner*/</span></span><br><span class="line">    <span class="keyword">uid_t</span> cuid;          <span class="comment">/* Effective UID of creator*/</span></span><br><span class="line">    <span class="keyword">uid_t</span> cgid;          <span class="comment">/* Effective GID of creator*/</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> mode; <span class="comment">/*Permissions*/</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> _seq; <span class="comment">/*sequence number*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="消息队列结构"><a href="#消息队列结构" class="headerlink" title="消息队列结构"></a>消息队列结构</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">msqid_ds</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> <span class="title">msg_perm</span>;</span>   <span class="comment">/* Ownership and permissions */</span></span><br><span class="line">    <span class="keyword">time_t</span> msg_stime;           <span class="comment">/* Time of last msgsnd(2) */</span></span><br><span class="line">    <span class="keyword">time_t</span> msg_rtime;           <span class="comment">/* Time of last msgrcv(2) */</span></span><br><span class="line">    <span class="keyword">time_t</span> msg_ctime;           <span class="comment">/* Time of last change */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> __msg_cbytes; <span class="comment">/* Current number of bytes in</span></span><br><span class="line"><span class="comment">                                                queue (nonstandard) */</span></span><br><span class="line">    <span class="keyword">msgqnum_t</span> msg_qnum;         <span class="comment">/* Current number of messages</span></span><br><span class="line"><span class="comment">                                                in queue */</span></span><br><span class="line">    <span class="keyword">msglen_t</span> msg_qbytes;        <span class="comment">/* Maximum number of bytes</span></span><br><span class="line"><span class="comment">                                                allowed in queue */</span></span><br><span class="line">    <span class="keyword">pid_t</span> msg_lspid;            <span class="comment">/* PID of last msgsnd(2) */</span></span><br><span class="line">    <span class="keyword">pid_t</span> msg_lrpid;            <span class="comment">/* PID of last msgrcv(2) */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="消息队列在内核中的表示"><a href="#消息队列在内核中的表示" class="headerlink" title="消息队列在内核中的表示"></a>消息队列在内核中的表示</h1><p><img src="/2019/07/12/linuxmessagequeue/msg_kernel.png" alt></p>
+<hr>
+<h1 id="消息队列函数"><a href="#消息队列函数" class="headerlink" title="消息队列函数"></a>消息队列函数</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/type.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgget</span><span class="params">(<span class="keyword">key_t</span> key, <span class="keyword">int</span> msgflag)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgctl</span><span class="params">(<span class="keyword">int</span> msgid, <span class="keyword">int</span> cmd, struct msqid_ds *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgcnd</span><span class="params">(<span class="keyword">int</span> msgqid, <span class="keyword">const</span> <span class="keyword">void</span> *msgp, <span class="keyword">size_t</span> msgsz, <span class="keyword">int</span> msgflag)</span></span>;</span><br><span class="line"><span class="keyword">ssize_t</span> msgrcv(<span class="keyword">int</span> msgqid, <span class="keyword">void</span> *msgp, <span class="keyword">size_t</span> msgsz, <span class="keyword">long</span> msgtyp, <span class="keyword">int</span> msgflag);</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="msgget函数"><a href="#msgget函数" class="headerlink" title="msgget函数"></a>msgget函数</h1><ul>
+<li><p>功能：用来创建和访问一个消息队列</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgget</span><span class="params">(<span class="keyword">key_t</span> key, <span class="keyword">int</span> msgflag)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>key：某个消息队列的名字</li>
+<li>msgflag：由九个权限表示构成，它们的用法和创建对象时使用的mode模式表示是一样的</li>
+</ul>
+</li>
+<li><p>返回值：成功返回一个非负整数，即该消息队列的标识码；失败返回-1</p>
+</li>
+</ul>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> msgid;</span><br><span class="line">    msgid = msgget(<span class="number">1234</span>, <span class="number">0666</span>);</span><br><span class="line">    <span class="comment">// msgid = msgget(1234, 0666 | IPC_CREAT);</span></span><br><span class="line">    <span class="comment">// msgid = msgget(1234, 0666 | IPC_CREAT | IPC_EXCL);</span></span><br><span class="line">    <span class="comment">// msgid = msgget(IPC_PRIVATE, 0666 | IPC_CREAT | IPC_EXCL);</span></span><br><span class="line">    <span class="comment">// msgid = msgget(IPC_PRIVATE, 0666);</span></span><br><span class="line">    <span class="comment">// msgid = msgget(1234, 0);</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgget succ\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="创建逻辑图"><a href="#创建逻辑图" class="headerlink" title="创建逻辑图"></a>创建逻辑图</h2><p><img src="/2019/07/12/linuxmessagequeue/msg_msgget.png" alt></p>
+<hr>
+<h1 id="msgctl函数"><a href="#msgctl函数" class="headerlink" title="msgctl函数"></a>msgctl函数</h1><ul>
+<li><p>功能：消息队列的控制函数</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgctl</span><span class="params">(<span class="keyword">int</span> msgqid, <span class="keyword">int</span> cmd, struct msgqid_ds *buf)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>msqid：由msgget函数返回的消息队列标识码</li>
+<li>cmd：是将要采用的动作（有三个值可取（</li>
+</ul>
+</li>
+<li><p>返回值：成功返回0，失败返回-1</p>
+<h2 id="cmd参数"><a href="#cmd参数" class="headerlink" title="cmd参数"></a>cmd参数</h2></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">IPC_STAT</td>
+<td>把msqid_ds结构中的数据设置为消息队列的当前关联值</td>
+</tr>
+<tr>
+<td style="text-align:center">IPC_SET</td>
+<td>在进程有足够权限的前提下，把消息队列的当前关联值设置为msqid_ds数据结构种给出的值</td>
+</tr>
+<tr>
+<td style="text-align:center">IPC_RMID</td>
+<td>删除消息队列</td>
+</tr>
+</tbody>
+</table>
+<h2 id="获取消息队列参数"><a href="#获取消息队列参数" class="headerlink" title="获取消息队列参数"></a>获取消息队列参数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> msgid;</span><br><span class="line">    msgid = msgget(<span class="number">1234</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgget succ\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgid = %d\n"</span>, msgid);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">msqid_ds</span> <span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (msgctl(msgid, IPC_STAT, &amp;buf) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgctl"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"mode = %o\n"</span>, buf.msg_perm.mode);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"bytes = %d\n"</span>, buf.__msg_cbytes);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"number = %d\n"</span>, buf.msg_qnum);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgmnb = %d\n"</span>, buf.msg_qbytes);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="设置消息队列参数"><a href="#设置消息队列参数" class="headerlink" title="设置消息队列参数"></a>设置消息队列参数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> msgid;</span><br><span class="line">    msgid = msgget(<span class="number">1234</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgget succ\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgid = %d\n"</span>, msgid);</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">msqid_ds</span> <span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">if</span> (msgctl(msgid, IPC_STAT, &amp;buf) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgctl"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    buf.msg_perm.mode = <span class="number">0600</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (msgctl(msgid, IPC_SET, &amp;buf) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgctl"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="删除消息队列"><a href="#删除消息队列" class="headerlink" title="删除消息队列"></a>删除消息队列</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> msgid;</span><br><span class="line">    msgid = msgget(<span class="number">1234</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgget succ\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"msgid = %d\n"</span>, msgid);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (msgctl(msgid, IPC_RMID, <span class="literal">NULL</span>) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgctl"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="msgsnd函数"><a href="#msgsnd函数" class="headerlink" title="msgsnd函数"></a>msgsnd函数</h1><ul>
+<li><p>功能：把一条消息添加到消息队列中</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">msgsnd</span><span class="params">(<span class="keyword">int</span> msqid, <span class="keyword">const</span> <span class="keyword">void</span> *msgp, <span class="keyword">size_t</span> msgsz, <span class="keyword">int</span> msgflg)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>msgid：由msgget函数返回的消息队列标识码。</li>
+<li>msgp：是一个指针，指针指向准备发送的消息。</li>
+<li>msgsz：是msgp执行的消息长度，这个长度不含保存消息类型的那个long int长整型。</li>
+<li>msgflag：控制着当前消息队列满或到达系统上限时将要发生的事情。</li>
+</ul>
+</li>
+<li><p>返回值：成功返回0，失败返回-1。<br>注意：</p>
+</li>
+<li><p>msgflag=IPC_NOWAIT表示队列满不等待，返回EAGAIN错误。</p>
+</li>
+<li><p>消息结构在两方面收到制约。首先，它必须小于系统规定的上限值；其次，它必须以一个long int长整数开始，接受者函数将利用这个长整数确定消息的类型 。</p>
+</li>
+<li><p>消息结构参考形式如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">msgbuf</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">long</span> mtype;</span><br><span class="line">    <span class="keyword">char</span> mtext[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>向消息队列发送数据例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">msgbuf</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">long</span> mtype;</span><br><span class="line">    <span class="keyword">char</span> mtext[<span class="number">1</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"Usage: %s &lt;bytes&gt; &lt;type&gt;\n"</span>, argv[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> len = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">    <span class="keyword">int</span> type = atoi(argv[<span class="number">2</span>]);</span><br><span class="line">    <span class="keyword">int</span> msgid;</span><br><span class="line">    msgid = msgget(<span class="number">1234</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">msgbuf</span> *<span class="title">ptr</span>;</span></span><br><span class="line">    ptr = (struct msgbuf *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">long</span>) + len);</span><br><span class="line">    ptr-&gt;mtype = type;</span><br><span class="line">    <span class="keyword">if</span> (msgsnd(msgid, ptr, len, <span class="number">0</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgsnd"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="msgrcv函数"><a href="#msgrcv函数" class="headerlink" title="msgrcv函数"></a>msgrcv函数</h1><ul>
+<li><p>功能：是从一个消息队列接收消息</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ssize_t</span> msgrcv(<span class="keyword">int</span> msgid, <span class="keyword">void</span> *msgp, <span class="keyword">size_t</span> msgsz, <span class="keyword">long</span> msgtype, <span class="keyword">int</span> msgflg);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>msgid：由msgget函数返回的消息队列标识码。</li>
+<li>msgp：是一个指针，指针执行准备接收的消息。</li>
+<li>msgsz：是msgp指向的消息长度，这个长度不含保存消息类型的那个long int长整型</li>
+<li>msgtype：它可以实现接受优先级的简单形式</li>
+<li>msgflg：控制着队列中没有相应类型的消息可供接受时将要发生的事</li>
+</ul>
+</li>
+<li><p>返回值：成功返回实际放到缓冲区里去的字符个数，失败返回-1<br>注意：</p>
+</li>
+<li><p>msgtype = 0 返回队列第一条消息</p>
+</li>
+<li><p>msgtype &gt; 0 返回队列第一条类型等于msgtype的消息</p>
+</li>
+<li><p>msgtype &lt; 0 返回队列类型最小的小于等于msgtype绝对值的消息</p>
+</li>
+<li><p>msgflg = IPC_NOWAIT，队列没有可读消息不等待，返回ENOMSG</p>
+</li>
+<li><p>msgflag = MSG_NOERROR，消息大小超过msgsz时被截断</p>
+</li>
+<li><p>msgtype &gt; 0 且 msgflag = MSG_EXCEPT，接受类型不等于msgtype的第一条消息</p>
+</li>
+</ul>
+<hr>
+<h1 id="消息队列实现回射客户-服务器"><a href="#消息队列实现回射客户-服务器" class="headerlink" title="消息队列实现回射客户/服务器"></a>消息队列实现回射客户/服务器</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/msg.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSGMAX 8192</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m) \</span></span><br><span class="line">    <span class="keyword">do</span>              \</span><br><span class="line">    &#123;               \</span><br><span class="line">        perror(m);  \</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);    \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">msgbuf</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">long</span> mtype;</span><br><span class="line">    <span class="keyword">char</span> mtext[<span class="number">1</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> flag = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> type = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> opt;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        opt = getopt(argc, argv, <span class="string">"nt:"</span>);</span><br><span class="line">        <span class="keyword">if</span> (opt == <span class="string">'?'</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (opt == <span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (opt)</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'n'</span>:</span><br><span class="line">            flag |= IPC_NOWAIT;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">'t'</span>:</span><br><span class="line">            type = atoi(optarg);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> msgid = msgget(<span class="number">1234</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (msgid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">msgbuf</span> *<span class="title">ptr</span>;</span></span><br><span class="line">    ptr = (struct msgbuf *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">long</span>) + MSGMAX);</span><br><span class="line">    ptr-&gt;mtype = type;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ((n = msgrcv(msgid, ptr, MSGMAX, type, flag)) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"msgrcv"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"read %d bytes type=%ld\n"</span>, n, type);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/12/linuxipc/" rel="next" title="进程间通信">
+                <i class="fa fa-chevron-left"></i> 进程间通信
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">56</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列"><span class="nav-number">1.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IPC对象数据结构"><span class="nav-number">2.</span> <span class="nav-text">IPC对象数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列结构"><span class="nav-number">3.</span> <span class="nav-text">消息队列结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列在内核中的表示"><span class="nav-number">4.</span> <span class="nav-text">消息队列在内核中的表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列函数"><span class="nav-number">5.</span> <span class="nav-text">消息队列函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#msgget函数"><span class="nav-number">6.</span> <span class="nav-text">msgget函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">6.1.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建逻辑图"><span class="nav-number">6.2.</span> <span class="nav-text">创建逻辑图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#msgctl函数"><span class="nav-number">7.</span> <span class="nav-text">msgctl函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#cmd参数"><span class="nav-number">7.1.</span> <span class="nav-text">cmd参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取消息队列参数"><span class="nav-number">7.2.</span> <span class="nav-text">获取消息队列参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置消息队列参数"><span class="nav-number">7.3.</span> <span class="nav-text">设置消息队列参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#删除消息队列"><span class="nav-number">7.4.</span> <span class="nav-text">删除消息队列</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#msgsnd函数"><span class="nav-number">8.</span> <span class="nav-text">msgsnd函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#msgrcv函数"><span class="nav-number">9.</span> <span class="nav-text">msgrcv函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#消息队列实现回射客户-服务器"><span class="nav-number">10.</span> <span class="nav-text">消息队列实现回射客户/服务器</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
