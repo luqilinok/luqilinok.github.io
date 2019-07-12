@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="信号量即能够执行互斥操作，也可以进行同步操作。本文介绍System V信号量的概念以及使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="System V 信号量">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/12/linuxsemaphore/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="信号量即能够执行互斥操作，也可以进行同步操作。本文介绍System V信号量的概念以及使用。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-12T06:44:38.959Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="System V 信号量">
+<meta name="twitter:description" content="信号量即能够执行互斥操作，也可以进行同步操作。本文介绍System V信号量的概念以及使用。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/12/linuxsemaphore/">
+
+
+
+
+
+  <title>System V 信号量 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/12/linuxsemaphore/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">System V 信号量</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-12T14:32:33+08:00">
+                2019-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-12T14:44:38+08:00" content="2019-07-12">
+      2019-07-12
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>信号量即能够执行互斥操作，也可以进行同步操作。本文介绍System V信号量的概念以及使用。</p>
+<a id="more"></a>
+<hr>
+<h1 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h1><ul>
+<li><p>信号量和P、V是由Dijsktra（迪杰斯特拉）提出的</p>
+</li>
+<li><p>信号量</p>
+<ul>
+<li>互斥：P、V在同一个进程中</li>
+<li>同步：P、V在不同进程中</li>
+</ul>
+</li>
+<li><p>信号量值含义</p>
+<ul>
+<li><p>S&gt;0：S表示可用资源的个数</p>
+</li>
+<li><p>S=0：表示无可用资源，无等待进程</p>
+</li>
+<li><p>S&lt;0：|S|表示当前等待进程的个数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semphore</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> value;</span><br><span class="line">    pointer_PCB <span class="built_in">queue</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="P原语"><a href="#P原语" class="headerlink" title="P原语"></a>P原语</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">P(s)</span><br><span class="line">&#123;</span><br><span class="line">    s.value--;</span><br><span class="line">    if (s.value &lt; 0) &#123;</span><br><span class="line">        该进程状态置为等待状态</span><br><span class="line">        将该进程的PCB插入相应的等待队列s.queue末尾</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="V原语"><a href="#V原语" class="headerlink" title="V原语"></a>V原语</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">V(s) </span><br><span class="line">&#123;</span><br><span class="line">    s.value++;</span><br><span class="line">    <span class="keyword">if</span> (s.value&lt;=<span class="number">0</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        唤醒相应等待进程队列s.<span class="built_in">queue</span>中等待的一个进程</span><br><span class="line">        改变其状态为就绪态</span><br><span class="line">        并将其插入到就绪状态</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="信号量集数据结构"><a href="#信号量集数据结构" class="headerlink" title="信号量集数据结构"></a>信号量集数据结构</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> <span class="title">sem_perm</span>;</span> <span class="comment">/* Ownership and permissions */</span></span><br><span class="line">    <span class="keyword">time_t</span> sem_otime;         <span class="comment">/* Last semop time */</span></span><br><span class="line">    <span class="keyword">time_t</span> sem_ctime;         <span class="comment">/* Last change time */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sem_nsems;  <span class="comment">/* No. of semaphores in set */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="信号量集函数"><a href="#信号量集函数" class="headerlink" title="信号量集函数"></a>信号量集函数</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semget</span><span class="params">(<span class="keyword">key_t</span> key, <span class="keyword">int</span> nsems, <span class="keyword">int</span> semflg)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semctl</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">int</span> semnum, <span class="keyword">int</span> cmd, ...)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semop</span><span class="params">(<span class="keyword">int</span> semid, struct sembuf *sops, <span class="keyword">unsigned</span> nsops)</span></span>;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="semget函数"><a href="#semget函数" class="headerlink" title="semget函数"></a>semget函数</h1><ul>
+<li><p>功能：用来创建和访问一个信号量集</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semget</span><span class="params">(<span class="keyword">key_t</span> key, <span class="keyword">int</span> nsems, <span class="keyword">int</span> semflg)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>key：信号量集的名字</li>
+<li>nsems，信号量集中信号量的个数</li>
+<li>smflg：由九个权限标志构成，他们的用法和创建文件时使用的mode模式标志是一样的</li>
+</ul>
+</li>
+<li><p>返回值：成功返回一个非负整数，即该信号集的标识码，失败返回-1</p>
+</li>
+</ul>
+<hr>
+<h1 id="semctl函数"><a href="#semctl函数" class="headerlink" title="semctl函数"></a>semctl函数</h1><ul>
+<li><p>功能：用于控制信号量集</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semctl</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">int</span> semnum, <span class="keyword">int</span> cmd, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>semid：由semget返回的信号量标识码</li>
+<li>semnum：信号集中信号量的序号</li>
+<li>cmd：将要采取的动作（有三个可取值）</li>
+<li>最后一个参数根据命令的不同而不同</li>
+</ul>
+</li>
+<li><p>返回值：成功返回0，失败返回-1</p>
+</li>
+</ul>
+<p>cmd：<br>| 命令 | 说明 |<br>| — | — |<br>| SETVAL | 设置信号量集中的信号量的计数值 |<br>| GETVAL | 获取信号量集中的信号量的计数值 |<br>| IPC_STAT | 把semid_ds结构中的数据设置为信号集的当前关联值 |<br>| IPC_SET | 在进程有足够权限的情况下，把信号量集的当前关联值设置为semid_ds数据结构体中给出的值 |<br>| IPC_RMID | 删除信号量集 |</p>
+<hr>
+<h1 id="semop函数"><a href="#semop函数" class="headerlink" title="semop函数"></a>semop函数</h1><ul>
+<li><p>功能：用来创建和访问一个信号量集</p>
+</li>
+<li><p>原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">semop</span><span class="params">(<span class="keyword">int</span> semid, struct sembuf *sops, <span class="keyword">unsigned</span> nsops)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>semid：信号量集的标识码</li>
+<li>sops：是指向一个结构数值的指针</li>
+<li>nsops：信号量的个数</li>
+</ul>
+</li>
+<li><p>返回值：成功返回0，失败返回-1</p>
+</li>
+</ul>
+<p>sembuf结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    shor sem_snum;</span><br><span class="line">    <span class="keyword">short</span> sem_op;</span><br><span class="line">    <span class="keyword">short</span> sem_flg;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>sem_num是信号量的编号</li>
+<li>sem_op是信号量一次PV操作时加减的数值，一般只会用到两个值，一个是“-1”，也就是P操作，等待信号量变得可用；另一个是“+1”，也就是我们的V操作，发出信号量已经变得可用</li>
+<li>sem_flag的两个取值是IPC_NOWAIT或SEM_UNDO</li>
+</ul>
+<hr>
+<h1 id="信号量实例"><a href="#信号量实例" class="headerlink" title="信号量实例"></a>信号量实例</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m)         \</span></span><br><span class="line">    <span class="keyword">do</span>                      \</span><br><span class="line">    &#123;                       \</span><br><span class="line">        perror(m);          \</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE); \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">union</span> semun &#123;</span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> *<span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> *<span class="built_in">array</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">seminfo</span> *__<span class="title">buf</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_create</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">1</span>, IPC_CREAT | IPC_EXCL | <span class="number">0666</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_open</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_setval</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">int</span> val)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    su.val = val;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, SETVAL, su))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_setval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_getval</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> ((ret = semctl(semid, <span class="number">0</span>, GETVAL, <span class="number">0</span>)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_d</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_RMID, <span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_d"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_p</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_p"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_v</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, +<span class="number">1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_v"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_getmode</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> <span class="title">sem</span>;</span></span><br><span class="line">    su.buf = &amp;sem;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_STAT, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"current permissions is %o\n"</span>, su.buf-&gt;sem_perm.mode);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_setmode</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">char</span> *mode)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> <span class="title">sem</span>;</span></span><br><span class="line">    su.buf = &amp;sem;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_STAT, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sscanf</span>(mode, <span class="string">"%o"</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)&amp;su.buf-&gt;sem_perm.mode);</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_SET, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_setmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"current permissions is %o\n"</span>, su.buf-&gt;sem_perm.mode);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">usage</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"usage: semtool [option] [value]\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-c: create a semphore\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-d: delete a semphore\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-s: set semphore value\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-g: get semphore value\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-p: p operation\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-v: v operation\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-m: set permissions mode\n"</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\t-o: get permissions mode\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> opt = getopt(argc, argv, <span class="string">"cds:gdpvm:o"</span>);</span><br><span class="line">    <span class="keyword">if</span> (opt == <span class="string">'?'</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (opt == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        usage();</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">key_t</span> key = ftok(<span class="string">"."</span>, <span class="string">'s'</span>);</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (opt)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'c'</span>:</span><br><span class="line">        semid = sem_create(key);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'d'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_d(semid);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'s'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_setval(semid, atoi(optarg));</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"value updated\n"</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'g'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"current value: %d\n"</span>, sem_getval(semid));</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'p'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_p(semid);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"current value: %d\n"</span>, sem_getval(semid));</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'v'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_v(semid);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"current value: %d\n"</span>, sem_getval(semid));</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'m'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_setmode(semid, optarg);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'o'</span>:</span><br><span class="line">        semid = sem_open(key);</span><br><span class="line">        sem_getmode(semid);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="用信号量实现进程互斥实例"><a href="#用信号量实现进程互斥实例" class="headerlink" title="用信号量实现进程互斥实例"></a>用信号量实现进程互斥实例</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m)         \</span></span><br><span class="line">    <span class="keyword">do</span>                      \</span><br><span class="line">    &#123;                       \</span><br><span class="line">        perror(m);          \</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE); \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">union</span> semun &#123;</span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> *<span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> *<span class="built_in">array</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">seminfo</span> *__<span class="title">buf</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_create</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">1</span>, IPC_CREAT | IPC_EXCL | <span class="number">0666</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_open</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_setval</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">int</span> val)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    su.val = val;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, SETVAL, su))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_setval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_getval</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> ((ret = semctl(semid, <span class="number">0</span>, GETVAL, <span class="number">0</span>)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_d</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_RMID, <span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_d"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_p</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_p"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_v</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, +<span class="number">1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_v"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_getmode</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> <span class="title">sem</span>;</span></span><br><span class="line">    su.buf = &amp;sem;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_STAT, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"current permissions is %o\n"</span>, su.buf-&gt;sem_perm.mode);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_setmode</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">char</span> *mode)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> <span class="title">sem</span>;</span></span><br><span class="line">    su.buf = &amp;sem;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_STAT, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sscanf</span>(mode, <span class="string">"%o"</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)&amp;su.buf-&gt;sem_perm.mode);</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_SET, su) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_setmode"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"current permissions is %o\n"</span>, su.buf-&gt;sem_perm.mode);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> semid;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">(<span class="keyword">char</span> op_char)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pause_time;</span><br><span class="line">    srand(getpid());</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        sem_p(semid);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%c"</span>, op_char);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        pause_time = rand() % <span class="number">3</span>;</span><br><span class="line">        sleep(pause_time);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%c"</span>, op_char);</span><br><span class="line">        fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        sem_v(semid);</span><br><span class="line">        pause_time = rand() % <span class="number">2</span>;</span><br><span class="line">        sleep(pause_time);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    semid = sem_create(IPC_PRIVATE);</span><br><span class="line">    sem_setval(semid, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"fork"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pid &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        sem_setval(semid, <span class="number">1</span>);</span><br><span class="line">        print(<span class="string">'o'</span>);</span><br><span class="line">        wait(<span class="literal">NULL</span>);</span><br><span class="line">        sem_d(semid);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        print(<span class="string">'x'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="用信号集解决哲学家就餐问题"><a href="#用信号集解决哲学家就餐问题" class="headerlink" title="用信号集解决哲学家就餐问题"></a>用信号集解决哲学家就餐问题</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m)         \</span></span><br><span class="line">    <span class="keyword">do</span>                      \</span><br><span class="line">    &#123;                       \</span><br><span class="line">        perror(m);          \</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE); \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">union</span> semun &#123;</span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> *<span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> *<span class="built_in">array</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">seminfo</span> *__<span class="title">buf</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_p</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_p"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_v</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, +<span class="number">1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_v"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DELAY ((rand() % 5) + 1)</span></span><br><span class="line"><span class="keyword">int</span> semid;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">wait_for_2fork</span><span class="params">(<span class="keyword">int</span> no)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = no;</span><br><span class="line">    <span class="keyword">int</span> right = (no + <span class="number">1</span>) % <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">buf</span>[2] = &#123;</span></span><br><span class="line">        &#123;left, <span class="number">-1</span>, <span class="number">0</span>&#125;,</span><br><span class="line">        &#123;right, <span class="number">-1</span>, <span class="number">0</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line">    semop(semid, buf, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free_2fork</span><span class="params">(<span class="keyword">int</span> no)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = no;</span><br><span class="line">    <span class="keyword">int</span> right = (no + <span class="number">1</span>) % <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">buf</span>[2] = &#123;</span></span><br><span class="line">        &#123;left, <span class="number">1</span>, <span class="number">0</span>&#125;,</span><br><span class="line">        &#123;right, <span class="number">1</span>, <span class="number">0</span>&#125;&#125;;</span><br><span class="line"></span><br><span class="line">    semop(semid, buf, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">philosophere</span><span class="params">(<span class="keyword">int</span> no)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    srand(getpid());</span><br><span class="line">    <span class="keyword">for</span> (;;)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d is thinking\n"</span>, no);</span><br><span class="line">        sleep(DELAY);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d is hungry\n"</span>, no);</span><br><span class="line">        wait_for_2fork(no);</span><br><span class="line">        sleep(DELAY);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d is eating \n"</span>, no);</span><br><span class="line">        free_2fork(no);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    semid = semget(IPC_PRIVATE, <span class="number">5</span>, IPC_CREAT | <span class="number">0666</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    su.val = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        semctl(semid, i, SETVAL, su);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> no = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">1</span>; i &lt;= <span class="number">5</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ERR_EXIT(<span class="string">"fork"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (pid == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            no = i;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    philosophere(no);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="用信号量解决生产者与消费者问题"><a href="#用信号量解决生产者与消费者问题" class="headerlink" title="用信号量解决生产者与消费者问题"></a>用信号量解决生产者与消费者问题</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*semfifo.h*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> SEMFIFO_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SEMFIFO_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ERR_EXIT(m)         \</span></span><br><span class="line">    <span class="keyword">do</span>                      \</span><br><span class="line">    &#123;                       \</span><br><span class="line">        perror(m);          \</span><br><span class="line">        <span class="built_in">exit</span>(EXIT_FAILURE); \</span><br><span class="line">    &#125; <span class="keyword">while</span> (<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">shmhead</span> <span class="title">shmhead_t</span>;</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">shmfifo</span> <span class="title">shmfifo_t</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">shmhead</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> blksize;  <span class="comment">// 块大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> blocks;   <span class="comment">// 总快数</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> rd_index; <span class="comment">// 读索引</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> wr_index; <span class="comment">// 写索引</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">shmfifo</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">shmhead_t</span> *p_shm; <span class="comment">// 共享内存头部指针</span></span><br><span class="line">    <span class="keyword">char</span> *p_payload;  <span class="comment">// 有效负载的其实地址</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> shmid;     <span class="comment">// 共享内存ID</span></span><br><span class="line">    <span class="keyword">int</span> sem_mutex; <span class="comment">// 用来互斥使用的信号量</span></span><br><span class="line">    <span class="keyword">int</span> sem_full;  <span class="comment">// 用来控制共享内存是否满的信号量</span></span><br><span class="line">    <span class="keyword">int</span> sem_empty; <span class="comment">// 用来控制信号量是否空的信号量</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">shmfifo_t</span> *semfifo_init(<span class="keyword">int</span> key, <span class="keyword">int</span> blksize, <span class="keyword">int</span> blocks);</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_pust</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo, <span class="keyword">const</span> <span class="keyword">void</span> *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_get</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo, <span class="keyword">void</span> *buf)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_destroy</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*semfifo.c*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/ipc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/shm.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/sem.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"semfifo.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">shmfifo_t</span> *semfifo_init(<span class="keyword">int</span> key, <span class="keyword">int</span> blksize, <span class="keyword">int</span> blocks)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">shmfifo_t</span> *fifo = (<span class="keyword">shmfifo_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">shmfifo_t</span>));</span><br><span class="line">    assert(fifo != <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">memset</span>(fifo, <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="keyword">shmfifo_t</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> shmid;</span><br><span class="line">    shmid = shmget(key, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">int</span> size = <span class="keyword">sizeof</span>(<span class="keyword">shmhead_t</span>) + blksize * blocks;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (shmid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        fifo-&gt;shmid = shmget(key, size, IPC_CREAT | <span class="number">0666</span>);</span><br><span class="line">        <span class="keyword">if</span> (fifo-&gt;shmid == <span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ERR_EXIT(<span class="string">"shmget"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        fifo-&gt;p_shm = (<span class="keyword">shmhead_t</span> *)shmat(fifo-&gt;shmid, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (fifo-&gt;p_shm == (<span class="keyword">shmhead_t</span> *)<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ERR_EXIT(<span class="string">"shmat"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        fifo-&gt;p_payload = (<span class="keyword">char</span> *)(fifo-&gt;p_shm + <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        fifo-&gt;p_shm-&gt;blksize = blksize;</span><br><span class="line">        fifo-&gt;p_shm-&gt;blocks = blocks;</span><br><span class="line">        fifo-&gt;p_shm-&gt;rd_index = <span class="number">0</span>;</span><br><span class="line">        fifo-&gt;p_shm-&gt;wr_index = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        fifo-&gt;sem_mutex = sem_create(key);</span><br><span class="line">        fifo-&gt;sem_full = sem_create(key + <span class="number">1</span>);</span><br><span class="line">        fifo-&gt;sem_empty = sem_create(key + <span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        sem_setval(fifo-&gt;sem_mutex, <span class="number">1</span>);</span><br><span class="line">        sem_setval(fifo-&gt;sem_full, blocks);</span><br><span class="line">        sem_setval(fifo-&gt;sem_empty, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        fifo-&gt;shmid = shmid;</span><br><span class="line">        fifo-&gt;p_shm = (<span class="keyword">shmhead_t</span> *)shmat(fifo-&gt;shmid, <span class="literal">NULL</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (fifo-&gt;p_shm == (<span class="keyword">shmhead_t</span> *)<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            ERR_EXIT(<span class="string">"shmat"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        fifo-&gt;p_payload = (<span class="keyword">char</span> *)(fifo-&gt;p_shm + <span class="number">1</span>);</span><br><span class="line">        fifo-&gt;sem_mutex = sem_open(key);</span><br><span class="line">        fifo-&gt;sem_full = sem_open(key + <span class="number">1</span>);</span><br><span class="line">        fifo-&gt;sem_empty = sem_open(key + <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> fifo;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_put</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo, <span class="keyword">void</span> *buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    sem_p(fifo-&gt;sem_full);</span><br><span class="line">    sem_p(fifo-&gt;sem_mutex);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memcpy</span>(fifo-&gt;p_payload + fifo-&gt;p_shm-&gt;blksize * fifo-&gt;p_shm-&gt;wr_index, buf, fifo-&gt;p_shm-&gt;blksize);</span><br><span class="line">    fifo-&gt;p_shm-&gt;wr_index = (fifo-&gt;p_shm-&gt;wr_index + <span class="number">1</span>) % fifo-&gt;p_shm-&gt;blocks;</span><br><span class="line"></span><br><span class="line">    sem_v(fifo-&gt;sem_mutex);</span><br><span class="line">    sem_v(fifo-&gt;sem_empty);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_get</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo, <span class="keyword">void</span> *buf)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    sem_p(fifo-&gt;sem_empty);</span><br><span class="line">    sem_p(fifo-&gt;sem_mutex);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">memcpy</span>(buf, fifo-&gt;p_payload + fifo-&gt;p_shm-&gt;blksize * fifo-&gt;p_shm-&gt;rd_index, fifo-&gt;p_shm-&gt;blksize);</span><br><span class="line">    fifo-&gt;p_shm-&gt;rd_index = (fifo-&gt;p_shm-&gt;rd_index + <span class="number">1</span>) % fifo-&gt;p_shm-&gt;blocks;</span><br><span class="line"></span><br><span class="line">    sem_v(fifo-&gt;sem_mutex);</span><br><span class="line">    sem_v(fifo-&gt;sem_full);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">semfifo_destroy</span><span class="params">(<span class="keyword">shmfifo_t</span> *fifo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    sem_d(fifo-&gt;sem_mutex);</span><br><span class="line">    sem_d(fifo-&gt;sem_full);</span><br><span class="line">    sem_d(fifo-&gt;sem_empty);</span><br><span class="line"></span><br><span class="line">    shmdt(fifo-&gt;p_shm);</span><br><span class="line">    shmctl(fifo-&gt;shmid, IPC_RMID, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">free</span>(fifo);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">union</span> semun &#123;</span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">semid_ds</span> *<span class="title">buf</span>;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">short</span> *<span class="built_in">array</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">seminfo</span> *__<span class="title">buf</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_create</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">1</span>, IPC_CREAT | IPC_EXCL | <span class="number">0666</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_open</span><span class="params">(<span class="keyword">key_t</span> key)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> semid;</span><br><span class="line">    semid = semget(key, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (semid == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"semget"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> semid;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_setval</span><span class="params">(<span class="keyword">int</span> semid, <span class="keyword">int</span> val)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">union</span> semun su;</span><br><span class="line">    su.val = val;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, SETVAL, su))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_setval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_getval</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> ((ret = semctl(semid, <span class="number">0</span>, GETVAL, <span class="number">0</span>)) == <span class="number">-1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_getval"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_d</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">if</span> (semctl(semid, <span class="number">0</span>, IPC_RMID, <span class="number">0</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_d"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_p</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, <span class="number">-1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_p"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sem_v</span><span class="params">(<span class="keyword">int</span> semid)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sembuf</span> <span class="title">sb</span> = &#123;</span><span class="number">0</span>, +<span class="number">1</span>, <span class="number">0</span>&#125;;</span><br><span class="line">    <span class="keyword">if</span> (semop(semid, &amp;sb, <span class="number">1</span>) &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        ERR_EXIT(<span class="string">"sem_v"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*sem_send.c*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"semfifo.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">stu</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125; STU;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">shmfifo_t</span> *fifo = semfifo_init(<span class="number">1234</span>, <span class="keyword">sizeof</span>(STU), <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    STU s;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="keyword">sizeof</span>(STU));</span><br><span class="line">    s.name[<span class="number">0</span>] = <span class="string">'A'</span>;</span><br><span class="line">    s.age = <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        semfifo_put(fifo, &amp;s);</span><br><span class="line">        s.name[<span class="number">0</span>] = s.name[<span class="number">0</span>] + <span class="number">1</span>;</span><br><span class="line">        s.age = s.age + i + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"SEND OK\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*semfifo_recv.c*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"semfifo.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">stu</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125; STU;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">shmfifo_t</span> *fifo = semfifo_init(<span class="number">1234</span>, <span class="keyword">sizeof</span>(STU), <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    STU s;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="keyword">sizeof</span>(STU));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        semfifo_get(fifo, &amp;s);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"name = %s age = %d\n"</span>, s.name, s.age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*semfifo_free.c*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"semfifo.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">stu</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">char</span> name[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">int</span> age;</span><br><span class="line">&#125; STU;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">shmfifo_t</span> *fifo = semfifo_init(<span class="number">1234</span>, <span class="keyword">sizeof</span>(STU), <span class="number">3</span>);</span><br><span class="line">    semfifo_destroy(fifo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/12/linuxmemory/" rel="next" title="System V 共享内存">
+                <i class="fa fa-chevron-left"></i> System V 共享内存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">58</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#信号量"><span class="nav-number">1.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#P原语"><span class="nav-number">2.</span> <span class="nav-text">P原语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#V原语"><span class="nav-number">3.</span> <span class="nav-text">V原语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#信号量集数据结构"><span class="nav-number">4.</span> <span class="nav-text">信号量集数据结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#信号量集函数"><span class="nav-number">5.</span> <span class="nav-text">信号量集函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#semget函数"><span class="nav-number">6.</span> <span class="nav-text">semget函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#semctl函数"><span class="nav-number">7.</span> <span class="nav-text">semctl函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#semop函数"><span class="nav-number">8.</span> <span class="nav-text">semop函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#信号量实例"><span class="nav-number">9.</span> <span class="nav-text">信号量实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用信号量实现进程互斥实例"><span class="nav-number">10.</span> <span class="nav-text">用信号量实现进程互斥实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用信号集解决哲学家就餐问题"><span class="nav-number">11.</span> <span class="nav-text">用信号集解决哲学家就餐问题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#用信号量解决生产者与消费者问题"><span class="nav-number">12.</span> <span class="nav-text">用信号量解决生产者与消费者问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
