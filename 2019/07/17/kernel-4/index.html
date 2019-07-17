@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="系统调用">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/17/kernel-4/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="目录">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-17T06:28:27.106Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="系统调用">
+<meta name="twitter:description" content="目录">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/17/kernel-4/">
+
+
+
+
+
+  <title>系统调用 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/17/kernel-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">系统调用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T14:21:30+08:00">
+                2019-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-17T14:28:27+08:00" content="2019-07-17">
+      2019-07-17
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>目录</p>
+<a id="more"></a>
+<p>=================</p>
+<ul>
+<li><a href="#41-%E4%B8%8E%E5%86%85%E6%A0%B8%E9%80%9A%E4%BF%A1">4.1 与内核通信</a></li>
+<li><a href="#42-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8">4.2 系统调用</a></li>
+<li><a href="#43-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F">4.3 系统调用处理程序</a></li>
+<li><a href="#44-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0">4.4 系统调用的实现</a></li>
+</ul>
+<hr>
+<h2 id="4-1-与内核通信"><a href="#4-1-与内核通信" class="headerlink" title="4.1 与内核通信"></a>4.1 与内核通信</h2><p>系统调用在用户空间和硬件设备之间添加了一个中间层，该层的作用如下：</p>
+<ul>
+<li>为用户空间提供了一种硬件的抽象接口</li>
+<li>系统调用保证了系统的稳定和安全</li>
+</ul>
+<hr>
+<h2 id="4-2-系统调用"><a href="#4-2-系统调用" class="headerlink" title="4.2 系统调用"></a>4.2 系统调用</h2><p>Unix的接口设计有一句格言：提供机制而不是策略，也就是说系统调用用于完成某种确定的目的的函数，这些函数怎么用完全不需要内核去关心。<br><code>getpid()</code>系统调用，内中中的实现：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SYSCALL_DEFINE0(getpid)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> task_tgid_vnr(current); <span class="comment">// returns current-&gt;tgid</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>SYSCALL_DEFINE0</code>只是一个宏，它定义了一个无参数的系统调用，展开的代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">asmlinkage <span class="keyword">long</span> <span class="title">sys_getpid</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br></pre></td></tr></table></figure></p>
+<p><code>asmlinkage</code>是一个限定词，通知编译器从栈中提取该函数的参数。<br>在Linux中，每个系统调用被赋予一个系统调用号，这样通过这个独一无二的系统调用号就可以关联系统调用。系统调用号非常重要，一旦分配了就无法改变。在Linux中，有一个“未实现”系统调用<code>sys_ni_syscall()</code>，它出了返回<code>-ENOSYS</code>以外不做任何其他工作，这个错误号是专门针对无效的系统调用而设的。<br>内核记录了系统调用表中的所有已注册过的系统调用的列表，存储在<code>sys_call_table</code>中，每一个体系结构中，都要定义这个表，在<code>x86</code>中，定义在<code>arch/x86/kernel/syscall_64.c</code>文件中。</p>
+<hr>
+<h2 id="4-3-系统调用处理程序"><a href="#4-3-系统调用处理程序" class="headerlink" title="4.3 系统调用处理程序"></a>4.3 系统调用处理程序</h2><p>用户空间无法直接执行内核代码，它们不能调用内核空间中的函数，因为内核驻留在受保护的地址空间上。用户空间转到内核空间的机制是通过软中断实现的：通过一个异常导致系统切换到内核态去执行异常处理程序，在<code>x86</code>系统上定义的软中断是中断号128，通过<code>int $0x80</code>指令触发该中断，执行中断处理程序，叫做<code>system_call()</code>，所有的系统调用陷入内核的方式都是相同的，<code>x86</code>中，通过<code>eax</code>寄存器将系统调用号传入内核，其他的参数通过<code>ebx</code>、<code>ecx</code>、<code>edx</code>、<code>esi</code>和<code>edi</code>传入，如果有多于六个的参数，用一个单独的寄存器存放指向所有这些参数在用户空间地址的指针，内核给用户的返回值也通过<code>eax</code>寄存器来传递。</p>
+<hr>
+<h2 id="4-4-系统调用的实现"><a href="#4-4-系统调用的实现" class="headerlink" title="4.4 系统调用的实现"></a>4.4 系统调用的实现</h2><p>通过一个函数<code>silly_foo()</code>，来介绍系统调用的实现过程，首先来定义这个函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">SYSCALL_DEFINE3(sys_foo, </span><br><span class="line">                    <span class="keyword">unsigned</span> <span class="keyword">long</span> *, src, </span><br><span class="line">                    <span class="keyword">unsigned</span> <span class="keyword">long</span> *, dst,</span><br><span class="line">                    <span class="keyword">unsigned</span> <span class="keyword">long</span> len)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> buf;</span><br><span class="line">    <span class="keyword">if</span> (copy_from_user(&amp;buf, src, len)) &#123;</span><br><span class="line">        <span class="keyword">return</span> -EFAULT;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (copy_to_user(dst, &amp;buf, len)) &#123;</span><br><span class="line">        <span class="keyword">return</span> -EFAULT;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个函数仅仅把空户空间的数据拷贝到内核空间，又从内核空间拷贝到用户空间。有时候，我们需要检测用户进程的权限能否做一些指定的操作，例如能够更改进程的<code>nice</code>值，可以通过<code>capable()</code>函数来实现。<br>在系统调用表的最后加入一个表项，每种支持该系统调用的硬件体系都必须要做这样的工作，对于大多数体系结构来说，该表位于<code>entry.s</code>文件中，形式如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ENTRY (sys_call_table)</span><br><span class="line">    .long sys_restart_syscall /* 0 */</span><br><span class="line">    .long sys_exit</span><br><span class="line">    .long sys_fork</span><br><span class="line">    .long sys_read</span><br><span class="line">    .long sys_write</span><br><span class="line">    .long sys_open    /* 5 */</span><br><span class="line">...</span><br><span class="line">    .long sys_foo</span><br></pre></td></tr></table></figure></p>
+<p>对于所支持的各种体系结构，系统调用号都必须定义在<code>&lt;asm/unistd.h&gt;</code>中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_restart_syscall 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_exit 1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_fork 2</span></span><br><span class="line">...</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_foo 338</span></span><br></pre></td></tr></table></figure></p>
+<p>对于我们自定义的系统函数，只能通过Linux提供的宏来访问。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __NR_foo 338</span></span><br><span class="line">__syscall0(<span class="keyword">long</span>, foo)</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/kernel-2/" rel="next" title="进程管理">
+                <i class="fa fa-chevron-left"></i> 进程管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/17/kernel-5/" rel="prev" title="链表">
+                链表 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-与内核通信"><span class="nav-number">1.</span> <span class="nav-text">4.1 与内核通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-系统调用"><span class="nav-number">2.</span> <span class="nav-text">4.2 系统调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-系统调用处理程序"><span class="nav-number">3.</span> <span class="nav-text">4.3 系统调用处理程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-系统调用的实现"><span class="nav-number">4.</span> <span class="nav-text">4.4 系统调用的实现</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

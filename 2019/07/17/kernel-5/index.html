@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux内核准备">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/17/kernel-5/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="目录">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-17T06:29:20.865Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux内核准备">
+<meta name="twitter:description" content="目录">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/17/kernel-5/">
+
+
+
+
+
+  <title>Linux内核准备 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/17/kernel-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux内核准备</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T14:19:30+08:00">
+                2019-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-17T14:29:20+08:00" content="2019-07-17">
+      2019-07-17
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>目录</p>
+<a id="more"></a>
+<p>=================</p>
+<ul>
+<li><a href="#11-%E8%8E%B7%E5%8F%96%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81">1.1 获取内核源码</a></li>
+<li><a href="#12-%E5%AE%89%E8%A3%85%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81">1.2 安装内核源码</a></li>
+<li><a href="#13-%E4%BD%BF%E7%94%A8%E8%A1%A5%E4%B8%81">1.3 使用补丁</a></li>
+<li><a href="#14-%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E6%A0%91">1.4 内核源码树</a></li>
+<li><a href="#15-%E7%BC%96%E8%AF%91%E5%86%85%E6%A0%B8">1.5 编译内核</a></li>
+<li><a href="#16-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91%E7%9A%84%E7%89%B9%E7%82%B9">1.6 内核开发的特点</a></li>
+<li><a href="#17-%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E7%A8%8B%E5%BA%8F">1.7 第一个内核模块程序</a></li>
+</ul>
+<hr>
+<h2 id="1-1-获取内核源码"><a href="#1-1-获取内核源码" class="headerlink" title="1.1 获取内核源码"></a>1.1 获取内核源码</h2><ul>
+<li>Linux内核官方网站：<a href="http://www.kernel.org" target="_blank" rel="noopener">http://www.kernel.org</a></li>
+<li>git：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/torvalds/linux.git</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h2 id="1-2-安装内核源码"><a href="#1-2-安装内核源码" class="headerlink" title="1.2 安装内核源码"></a>1.2 安装内核源码</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> cd /usr/src/kernel</span><br><span class="line"><span class="meta">$</span> tar xzvf linux-2.6.32.tar.gz</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="1-3-使用补丁"><a href="#1-3-使用补丁" class="headerlink" title="1.3 使用补丁"></a>1.3 使用补丁</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">diff -Nur newfile oldfile</span><br><span class="line">patch -p1 &lt; ../patch-x.y.z</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for i in `ls ../patch`; \ </span><br><span class="line">do patch -p1 &lt; ../patch/"$i";done</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="1-4-内核源码树"><a href="#1-4-内核源码树" class="headerlink" title="1.4 内核源码树"></a>1.4 内核源码树</h2><table>
+<thead>
+<tr>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">arch</td>
+<td style="text-align:center">特定体系结构的源码</td>
+</tr>
+<tr>
+<td style="text-align:center">block</td>
+<td style="text-align:center">块设备I/O层</td>
+</tr>
+<tr>
+<td style="text-align:center">crypto</td>
+<td style="text-align:center">加密API</td>
+</tr>
+<tr>
+<td style="text-align:center">Documention</td>
+<td style="text-align:center">内核源码文档</td>
+</tr>
+<tr>
+<td style="text-align:center">drivers</td>
+<td style="text-align:center">设备驱动程序</td>
+</tr>
+<tr>
+<td style="text-align:center">firmware</td>
+<td style="text-align:center">使用某些驱动程序而需要的设备固件</td>
+</tr>
+<tr>
+<td style="text-align:center">fs</td>
+<td style="text-align:center">VFS和各种文件系统</td>
+</tr>
+<tr>
+<td style="text-align:center">include</td>
+<td style="text-align:center">内核头文件</td>
+</tr>
+<tr>
+<td style="text-align:center">init</td>
+<td style="text-align:center">内核引导和初始化</td>
+</tr>
+<tr>
+<td style="text-align:center">ipc</td>
+<td style="text-align:center">进程间通信</td>
+</tr>
+<tr>
+<td style="text-align:center">kernel</td>
+<td style="text-align:center">像调度程序这样的核心子系统</td>
+</tr>
+<tr>
+<td style="text-align:center">lib</td>
+<td style="text-align:center">管理内核函数</td>
+</tr>
+<tr>
+<td style="text-align:center">mm</td>
+<td style="text-align:center">内核管理子系统和VM</td>
+</tr>
+<tr>
+<td style="text-align:center">net</td>
+<td style="text-align:center">网络子系统</td>
+</tr>
+<tr>
+<td style="text-align:center">samples</td>
+<td style="text-align:center">实例，实例代码</td>
+</tr>
+<tr>
+<td style="text-align:center">scripts</td>
+<td style="text-align:center">编译内核使用的脚本</td>
+</tr>
+<tr>
+<td style="text-align:center">security</td>
+<td style="text-align:center">Linux安全模块</td>
+</tr>
+<tr>
+<td style="text-align:center">sound</td>
+<td style="text-align:center">语音子系统</td>
+</tr>
+<tr>
+<td style="text-align:center">usr</td>
+<td style="text-align:center">早期用户空间代码（initramfs）</td>
+</tr>
+<tr>
+<td style="text-align:center">tools</td>
+<td style="text-align:center">在Linux开发中有用的工具</td>
+</tr>
+<tr>
+<td style="text-align:center">virt</td>
+<td style="text-align:center">虚拟化基础结构</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-5-编译内核"><a href="#1-5-编译内核" class="headerlink" title="1.5 编译内核"></a>1.5 编译内核</h2><p>内核配置</p>
+<ul>
+<li><code>make menuconfig</code></li>
+<li><code>make config</code></li>
+<li><code>make xconfig</code></li>
+<li><p><code>make defconfig</code></p>
+</li>
+<li><p><code>make clean</code></p>
+</li>
+<li><code>make distclean</code></li>
+</ul>
+<p>配置之后会产生.config文件<br>内核编译：</p>
+<ul>
+<li><code>make</code></li>
+<li><code>make modules</code></li>
+<li><code>make modules_install</code></li>
+<li><code>make install</code></li>
+<li><code>/sbin/depmod 2.6.31.8</code></li>
+<li><code>make -jn</code></li>
+</ul>
+<p>模块安装到 <code>/lib/modues</code></p>
+<hr>
+<h2 id="1-6-内核开发的特点"><a href="#1-6-内核开发的特点" class="headerlink" title="1.6 内核开发的特点"></a>1.6 内核开发的特点</h2><ul>
+<li>内核编程时既不能访问<code>C</code>库也不能访问标准的<code>C</code>头文件；</li>
+<li>内核编程时必须使用<code>GNU C</code>；</li>
+<li>内核编程时缺乏想用户空间那样的内存保护机制；</li>
+<li>内核编程时难以执行浮点运算；</li>
+<li>内核给每个进程只有一个很小的定长堆栈；</li>
+<li>由于内核支持异步中断、抢占和<code>SMP</code>，因此必须时刻注意同步和并发；</li>
+<li><p>要考虑可移植性的重要性。</p>
+</li>
+<li><p>查看内核打印消息：<code>dmesg</code>或<code>cat /var/log/message</code></p>
+</li>
+<li>清空当前内核消息：<code>dmesg -c</code></li>
+<li>插入内核模块：<code>insmod HelloWorld.ko</code></li>
+<li>查看内核模块：<code>lsmod</code></li>
+<li>删除内核模块：<code>rmmod HelloWorld.ko</code></li>
+</ul>
+<hr>
+<h2 id="1-7-第一个内核模块程序"><a href="#1-7-第一个内核模块程序" class="headerlink" title="1.7 第一个内核模块程序"></a>1.7 第一个内核模块程序</h2><p><code>HelloWord.c</code><br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#Include &lt;linux/init.h&gt;</span><br><span class="line">#Include &lt;linux/<span class="keyword">module</span>.h&gt;</span><br><span class="line">MODULE_LICENSE(<span class="string">"Dual BAD/GPL"</span>)</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hello_init</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">"Hello, world!\n"</span>);</span><br><span class="line">    printk(<span class="string">"Hello: module loaded at 0x%p"</span>, hello_init);</span><br><span class="line">    printk(<span class="string">"HZ = %d\n"</span>, HZ);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">hello_exit</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    printk(KERN_INFO <span class="string">"Goodbye, cruel word!\n"</span>); </span><br><span class="line">    printk(<span class="string">"By: module loaded at 0x%p\n"</span>, hello_exit);</span><br><span class="line">&#125;</span><br><span class="line">module_init(hello_init);</span><br><span class="line">module_exit(hello_exit);</span><br><span class="line">MODULE_AUTHOR(<span class="string">"harlonxl@gmail.com"</span>);</span><br><span class="line">MODULE_DESCRIPTION(<span class="string">"Hello world, first kernel module"</span>);</span><br></pre></td></tr></table></figure></p>
+<hr>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/distributedsystemlock/" rel="next" title="分布式锁以及三种实现方式">
+                <i class="fa fa-chevron-left"></i> 分布式锁以及三种实现方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/17/kernel-3/" rel="prev" title="进程调度">
+                进程调度 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-获取内核源码"><span class="nav-number">1.</span> <span class="nav-text">1.1 获取内核源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-安装内核源码"><span class="nav-number">2.</span> <span class="nav-text">1.2 安装内核源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-使用补丁"><span class="nav-number">3.</span> <span class="nav-text">1.3 使用补丁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-内核源码树"><span class="nav-number">4.</span> <span class="nav-text">1.4 内核源码树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-编译内核"><span class="nav-number">5.</span> <span class="nav-text">1.5 编译内核</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-内核开发的特点"><span class="nav-number">6.</span> <span class="nav-text">1.6 内核开发的特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-7-第一个内核模块程序"><span class="nav-number">7.</span> <span class="nav-text">1.7 第一个内核模块程序</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

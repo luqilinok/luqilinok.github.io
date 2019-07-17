@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="目录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进程管理">
+<meta property="og:url" content="http://luqilinok.github.io/2019/07/17/kernel-2/index.html">
+<meta property="og:site_name" content="Lu QiLin&#39;s Blog">
+<meta property="og:description" content="目录">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://github.com/Harlonxl/Learning-Note/blob/master/image/thread_info.png">
+<meta property="og:image" content="https://github.com/Harlonxl/Learning-Note/blob/master/image/task_state.jpeg">
+<meta property="og:updated_time" content="2019-07-17T06:28:43.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="进程管理">
+<meta name="twitter:description" content="目录">
+<meta name="twitter:image" content="https://github.com/Harlonxl/Learning-Note/blob/master/image/thread_info.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luqilinok.github.io/2019/07/17/kernel-2/">
+
+
+
+
+
+  <title>进程管理 | Lu QiLin's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lu QiLin's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-technology">
+          <a href="/categories/Technology/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Technology
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-notes">
+          <a href="/categories/Notes/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Notes
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-personal">
+          <a href="/categories/Personal/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            Personal
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            About
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luqilinok.github.io/2019/07/17/kernel-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="LuQiLin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lu QiLin's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">进程管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-07-17T14:20:30+08:00">
+                2019-07-17
+              </time>
+            
+
+            
+
+            
+          </span>
+          
+  <span class="post-updated">
+    &nbsp; | &nbsp; 更新于
+    <time itemprop="dateUpdated" datetime="2019-07-17T14:28:43+08:00" content="2019-07-17">
+      2019-07-17
+    </time>
+  </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Notes/" itemprop="url" rel="index">
+                    <span itemprop="name">Notes</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>目录</p>
+<a id="more"></a>
+<p>=================</p>
+<ul>
+<li><a href="#21-%E8%BF%9B%E7%A8%8B">2.1 进程</a></li>
+<li><a href="#22-%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%8F%8A%E4%BB%BB%E5%8A%A1%E7%BB%93%E6%9E%9C">2.2 进程描述符及任务结果</a><ul>
+<li><a href="#221-%E5%88%86%E9%85%8D%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6">2.2.1 分配进程描述符</a></li>
+<li><a href="#222-%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84%E5%AD%98%E6%94%BE">2.2.2 进程描述符的存放</a></li>
+<li><a href="#223-%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81">2.2.3 进程状态</a></li>
+<li><a href="#224-%E8%AE%BE%E7%BD%AE%E5%BD%93%E5%89%8D%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81">2.2.4 设置当前进程状态</a></li>
+<li><a href="#225-%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87">2.2.5 进程上下文</a></li>
+<li><a href="#226-%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA">2.2.6 进程创建</a></li>
+<li><a href="#227-fork%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B">2.2.7 fork()函数调用过程</a></li>
+<li><a href="#228-vfork">2.2.8 vfork()</a></li>
+</ul>
+</li>
+<li><a href="#23-%E7%BA%BF%E7%A8%8B%E5%9C%A8linux%E4%B8%AD%E7%9A%84%E5%AE%9E%E7%8E%B0">2.3 线程在linux中的实现</a><ul>
+<li><a href="#231-%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA">2.3.1 线程创建</a></li>
+<li><a href="#232-%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B">2.3.2 内核线程</a></li>
+<li><a href="#24-%E8%BF%9B%E7%A8%8B%E7%BB%88%E7%BB%93">2.4 进程终结</a></li>
+<li><a href="#241-%E5%88%A0%E9%99%A4%E8%BF%9B%E7%A8%8B%E6%8F%8F%E8%BF%B0%E7%AC%A6">2.4.1 删除进程描述符</a></li>
+<li><a href="#252-%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B">2.5.2 孤儿进程</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-1-进程"><a href="#2-1-进程" class="headerlink" title="2.1 进程"></a>2.1 进程</h2><ul>
+<li>进程就是处于运行期的程序以及相关资源的总称，是操作系统进行资源分配和调度的基本单位，进程通常包含一些资源，例如打开的文件描述符，挂起的信号，内核内部数据，处理器状态，一个或者多个具有内存映射的内存地址空间及一个或多个执行线程，还有用来存放全局变量的数据段等。</li>
+<li>执行线程是在进程中的活动对象，是<code>CPU</code>调度的最小单位，每个线程拥有独立的程序计数器，进程栈和一组进程寄存器。</li>
+<li>linux系统下查看进程：<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> ps aux</span><br><span class="line">USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root         1  0.0  0.1  43272  3672 ?        Ss   Jun07   0:26 /usr/lib/systemd/systemd --switched-root --system --deserialize 21</span><br><span class="line">root         2  0.0  0.0      0     0 ?        S    Jun07   0:00 [kthreadd]</span><br><span class="line">root         3  0.0  0.0      0     0 ?        S    Jun07   0:21 [ksoftirqd/0]</span><br><span class="line">root         5  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [kworker/0:0H]</span><br><span class="line">root         7  0.0  0.0      0     0 ?        S    Jun07   0:00 [migration/0]</span><br><span class="line">root         8  0.0  0.0      0     0 ?        S    Jun07   0:00 [rcu_bh]</span><br><span class="line">root         9  0.0  0.0      0     0 ?        R    Jun07   2:29 [rcu_sched]</span><br><span class="line">root        10  0.0  0.0      0     0 ?        S    Jun07   0:10 [watchdog/0]</span><br><span class="line">root        12  0.0  0.0      0     0 ?        S    Jun07   0:00 [kdevtmpfs]</span><br><span class="line">root        13  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [netns]</span><br><span class="line">root        14  0.0  0.0      0     0 ?        S    Jun07   0:00 [khungtaskd]</span><br><span class="line">root        15  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [writeback]</span><br><span class="line">root        16  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [kintegrityd]</span><br><span class="line">root        17  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [bioset]</span><br><span class="line">root        18  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [kblockd]</span><br><span class="line">root        19  0.0  0.0      0     0 ?        S&lt;   Jun07   0:00 [md]</span><br><span class="line">root        25  0.0  0.0      0     0 ?        S    Jun07   0:00 [kswapd0]</span><br><span class="line">root        26  0.0  0.0      0     0 ?        SN   Jun07   0:00 [ksmd]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><code>ps</code>命令参数含义：</p>
+<ul>
+<li><code>a</code>：打印所有进程</li>
+<li><code>u</code>：以用户为主打印进程</li>
+<li><code>x</code>：显示所有进程，不区分终端</li>
+</ul>
+<hr>
+<h2 id="2-2-进程描述符及任务结果"><a href="#2-2-进程描述符及任务结果" class="headerlink" title="2.2 进程描述符及任务结果"></a>2.2 进程描述符及任务结果</h2><p>进程描述符<code>task_struct</code>，该结构定义在<code>&lt;linux/sched.h&gt;</code>中，放在一个双向循环循环链表。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> &#123;</span></span><br><span class="line">    <span class="comment">/** 进程状态 */</span></span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">long</span> state;	 <span class="comment">/* -1 unrunnable, 0 runnable, &gt;0 stopped */</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">/** 进程描述符链表 */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">tasks</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">plist_node</span> <span class="title">pushable_tasks</span>;</span></span><br><span class="line">    <span class="comment">/** 虚拟内存结构 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">mm_struct</span> *<span class="title">mm</span>, *<span class="title">active_mm</span>;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">/** 进程PID */</span>    </span><br><span class="line">    <span class="keyword">pid_t</span> pid; </span><br><span class="line">    <span class="comment">/** 线程组的领导线程ID */</span>    </span><br><span class="line">	<span class="keyword">pid_t</span> tgid;</span><br><span class="line">	...</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">real_parent</span>;</span> <span class="comment">/* real parent process */</span></span><br><span class="line">	<span class="comment">/** 父进程进程描述符 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span> *<span class="title">parent</span>;</span></span><br><span class="line">	<span class="comment">/** 子进程链表 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">children</span>;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="comment">/** 文件系统信息 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fs_struct</span> *<span class="title">fs</span>;</span></span><br><span class="line">    <span class="comment">/** 进程打开文件的信息 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">files_struct</span> *<span class="title">files</span>;</span></span><br><span class="line">    <span class="comment">/** 命名空间 */</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">nsproxy</span> *<span class="title">nsproxy</span>;</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查看linux系统中<code>pid</code>的最大值：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> cat /proc/sys/kernel/pid_max </span><br><span class="line">32768</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="2-2-1-分配进程描述符"><a href="#2-2-1-分配进程描述符" class="headerlink" title="2.2.1 分配进程描述符"></a>2.2.1 分配进程描述符</h3><p>linux是通过<code>slab</code>分期器来分配 <code>task_struct</code>结构，这样能达到对象复用和缓存着色<code>(cache coloring)</code>的目的。</p>
+<hr>
+<h3 id="2-2-2-进程描述符的存放"><a href="#2-2-2-进程描述符的存放" class="headerlink" title="2.2.2 进程描述符的存放"></a>2.2.2 进程描述符的存放</h3><p>在内核中，访问任务通常要获得指向task_struct的指针，可以通过<code>current</code>宏查找当前正在运行进程的进程描述符。硬件体系不同，这个宏的实现是不同的，例如：<code>PowerPC</code>中，专门有一个寄存器来存放该宏，而对于<code>x86</code>这种寄存器比较缺的体系结构，只能在栈的尾端创建<code>thread_info</code>结构，通过计算偏移间接地查找 <code>task_struct</code>结构。<br>在<code>x86</code>系统中，<code>current</code>把栈指针的后13个有效位屏蔽掉，用来计算<code>thread_info</code>的偏移，该操作是通过<code>current_thread_info()</code>函数来完成的。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> struct thread_info *<span class="title">current_thread_info</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (struct thread_info *)</span><br><span class="line">		(current_stack_pointer &amp; ~(THREAD_SIZE - <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>thread_info</code>结构体如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">thread_info</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">pcb_struct</span>	<span class="title">pcb</span>;</span>		<span class="comment">/* palcode state */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">task_struct</span>	*<span class="title">task</span>;</span>		<span class="comment">/* main task structure */</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span>		flags;		<span class="comment">/* low level flags */</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span>		ieee_state;	<span class="comment">/* see fpu.h */</span></span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">exec_domain</span>	*<span class="title">exec_domain</span>;</span>	<span class="comment">/* execution domain */</span></span><br><span class="line">	<span class="keyword">mm_segment_t</span>		addr_limit;	<span class="comment">/* thread address space */</span></span><br><span class="line">	<span class="keyword">unsigned</span>		cpu;		<span class="comment">/* current CPU */</span></span><br><span class="line">	<span class="keyword">int</span>			preempt_count; <span class="comment">/* 0 =&gt; preemptable, &lt;0 =&gt; BUG */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> bpt_nsaved;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> bpt_addr[<span class="number">2</span>];		<span class="comment">/* breakpoint handling  */</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> bpt_insn[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">restart_block</span>	<span class="title">restart_block</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><code>thread_info</code>的地址在栈顶，如下图所示：</p>
+<div align="center"><img width="500" src="https://github.com/Harlonxl/Learning-Note/blob/master/image/thread_info.png"></div>
+
+<hr>
+<h3 id="2-2-3-进程状态"><a href="#2-2-3-进程状态" class="headerlink" title="2.2.3 进程状态"></a>2.2.3 进程状态</h3><p>进程描述符<code>state</code>域描述了当前进程的状态，系统中的每个进程必然处于五种进程状态中的一种：</p>
+<ul>
+<li><code>TASK_RUNING</code>：运行状态，进程时可运行的，它或者正在执行，或者在运行队列找那个等待运行。</li>
+<li><code>TASK_INTERRUPTIBLE</code>：可中断，进程正在睡眠，等待某些条件的达成。一旦条件达成，内核就会把进程状态置为运行，处于此状态的进程也会因为接收到信号而提前被唤醒并随时准备投入运行。</li>
+<li><code>TASK_UNINTERRUPTIBLE</code>：不可屏蔽，除了就算接收到信号也不会被唤醒或准备投入运行外，这个状态与可中断状态相同。</li>
+<li><code>_TASK_TRACED</code>：被其他进程跟踪的进程，例如通过<code>ptrace</code>对调试程序进行跟踪。</li>
+<li><code>_TASK_STOPPED</code>：停止状态，进程停止运行。<div align="center"><img width="800" src="https://github.com/Harlonxl/Learning-Note/blob/master/image/task_state.jpeg"></div><br><div align="center">进程状态转化图</div>
+
+</li>
+</ul>
+<hr>
+<h3 id="2-2-4-设置当前进程状态"><a href="#2-2-4-设置当前进程状态" class="headerlink" title="2.2.4 设置当前进程状态"></a>2.2.4 设置当前进程状态</h3><p>通过函数<code>set_task_state(task, state)</code>函数来设置，必要的时候设置内存屏障来强制其他处理器作重新排序。否则，等同于：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task-&gt;state = state;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="2-2-5-进程上下文"><a href="#2-2-5-进程上下文" class="headerlink" title="2.2.5 进程上下文"></a>2.2.5 进程上下文</h3><p>当一个程序执行了系统调用或者触发了某个异常，就陷入了内核空间，此时，我们称内核“代表进程执行”并处于进程上下文中，在此上下文中<code>current</code>宏是有效的。</p>
+<hr>
+<h3 id="2-2-6-进程创建"><a href="#2-2-6-进程创建" class="headerlink" title="2.2.6 进程创建"></a>2.2.6 进程创建</h3><p>Unix进程创建是通过两个函数来执行的：<code>fork()</code>函数和<code>exec()</code>函数。</p>
+<ul>
+<li><code>fork()</code>：拷贝当前进程创建一个子进程，子进程与父进程的区别仅仅在于<code>PID</code>、<code>PPID</code>和某些资源和统计量（如，挂起的信号）。linux的<code>frok()</code>使用写时拷贝实现的，<code>fork()</code>创建子进程时，并不会复制父进程的地址空间，而是共享父进程的地址空间，只有对需要写入的时候，数据才会被复制，这种延迟拷贝的机制提高了<code>exec()</code>函数的效率。</li>
+<li><code>exec()</code>：负责读取可执行文件并将其载入地址空间开始运行。</li>
+</ul>
+<hr>
+<h3 id="2-2-7-fork-函数调用过程"><a href="#2-2-7-fork-函数调用过程" class="headerlink" title="2.2.7 fork()函数调用过程"></a>2.2.7 fork()函数调用过程</h3><p><code>fork()</code>函数的实际开销就是拷贝父进程的页表以及为子进程创建唯一的进程描述符。<code>fork()</code>、<code>vfork()</code>和<code>__clone()</code>库函数都是根据自己需要的参数标记去调用<code>clone()</code>函数，然后由<code>clone()</code>调用<code>do_fork()</code>，<code>clone()</code>声明如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clone</span><span class="params">(<span class="keyword">int</span> (*proc)(<span class="keyword">void</span> *), <span class="keyword">void</span> *sp, <span class="keyword">int</span> flags, <span class="keyword">void</span> *data)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>clone()</code>函数也是linux用来创建线程的函数，其参数含义如下：</p>
+<ul>
+<li><code>proc</code>：线程调用的函数；</li>
+<li><code>sp</code>：线程使用的堆栈；</li>
+<li><code>flags</code>：用于控制进程的行为，例如共享打开文件等</li>
+<li><code>data</code>：线程函数的参数</li>
+</ul>
+<p><code>do_fork()</code>函数调用<code>copy_process()</code>函数完成创建工作：</p>
+<ul>
+<li>调用<code>dup_task_struct()</code>为新进程创建一个内核栈、<code>thread_info</code>结构和<code>task_struct</code>，这些值与当前的进程的值相同。此时，子进程与父进程的描述符是完全相同的；</li>
+<li>检查并确保创建这个子进程后，当前用户所拥有进程数目没有超出给它分配的资源的限制；</li>
+<li>子进程设置自己的<code>task_struct</code>中的一些字段；</li>
+<li>子进程的状态设置为<code>TASK_UNINTERRUPTIBLE</code>；</li>
+<li>调用<code>alloc_pid()</code>为新进程分配一个有效<code>pid</code>；</li>
+<li>之后根据<code>clone()</code>函数的参数，拷贝或者共享打开的文件、文件状态信息、信号处理函数、进程地址空间和命名空间等。</li>
+</ul>
+<hr>
+<h3 id="2-2-8-vfork"><a href="#2-2-8-vfork" class="headerlink" title="2.2.8 vfork()"></a>2.2.8 vfork()</h3><p><code>vfork()</code>函数不会拷贝进程表项，子进程不能写地址空间，并且<code>vfork()</code>会让子进程先执行，子进程和父进程共享堆栈、数据段，<code>vfork()</code>函数存在的意义就是创建子进程之后调用<code>exec()</code>函数族，现在由于<code>fork()</code>函数有了写时拷贝机制，<code>vfrok()</code>的意义并不大，最好不要使用<code>vfork()</code>函数。  </p>
+<hr>
+<h2 id="2-3-线程在linux中的实现"><a href="#2-3-线程在linux中的实现" class="headerlink" title="2.3 线程在linux中的实现"></a>2.3 线程在linux中的实现</h2><p>linux内核并不区分线程和进程，每个线程都拥有唯一隶属于自己的<code>task_struct</code>，只不过与另一个进程（父进程）共享某些资源。<br>其他操作系统的实现可能是提供了专门支持线程的机制，通常称作为轻量级进程（<code>LWP</code>）。  </p>
+<h3 id="2-3-1-线程创建"><a href="#2-3-1-线程创建" class="headerlink" title="2.3.1 线程创建"></a>2.3.1 线程创建</h3><p>线程创建的调用过程如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clone(CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>线程共享地址空间、文件系统资源、打开的文件描述符和信号处理程序等。<br><code>fork()</code>的创建如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clone(CLONE_SIGHAND, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p><code>vfork()</code>的创建如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clone(CLONE_VFORK | CLONE_VM | CLONE_SIGHAND, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p><code>clone()</code>函数的这些参数是在<code>&lt;linux/sched.h&gt;</code>中定义的。</p>
+<hr>
+<h3 id="2-3-2-内核线程"><a href="#2-3-2-内核线程" class="headerlink" title="2.3.2 内核线程"></a>2.3.2 内核线程</h3><p>内核线程是用来在后台执行一些操作，内核线程与普通线程的区别在于内核线程没有独立的地址空间，其<code>task_struct</code>的<code>mm</code>为<code>NULL</code>，只在内核空间运行，内核线程和普通线程一样，可以被调度，也可以被抢占。<br>内核线程只能由内核线程来创建，linux是通过<code>kthreadd</code>内核进程找中衍生出所有新的内核线程，接口定义在<code>&lt;linux/kthread.h&gt;</code>中。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">truct task_struct *<span class="title">kthread_create</span><span class="params">(<span class="keyword">int</span> (*threadfn)(<span class="keyword">void</span> *data),</span></span></span><br><span class="line"><span class="function"><span class="params">				   <span class="keyword">void</span> *data,</span></span></span><br><span class="line"><span class="function"><span class="params">				   <span class="keyword">const</span> <span class="keyword">char</span> namefmt[], ...)</span></span></span><br><span class="line"><span class="function">	__<span class="title">attribute__</span><span class="params">((format(<span class="built_in">printf</span>, <span class="number">3</span>, <span class="number">4</span>)))</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p><code>threadfn</code>是内核线程运行的函数，<code>data</code>是传递的参数，<code>namefmt</code>是内核线程的参数，创建的内核线程不会自动运行，要通过<code>wake_up_process()</code>函数唤醒它并运行，这两个操作可以通过<code>kthread_run()</code>来完成：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> kthread_run(threadfn, data, namefmt, ...)			   \</span></span><br><span class="line">(&#123;									   \</span><br><span class="line">	struct task_struct *__k						   \</span><br><span class="line">		= kthread_create(threadfn, data, namefmt, ## __VA_ARGS__); \</span><br><span class="line">	<span class="keyword">if</span> (!IS_ERR(__k))						   \</span><br><span class="line">		wake_up_process(__k);					   \</span><br><span class="line">	__k;								   \</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>内核线程会一直运行直到调用<code>do_exit()</code>，或者内核的其他部分调用<code>kthread_stop()</code>函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">kthread_stop</span><span class="params">(struct task_struct *k)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="2-4-进程终结"><a href="#2-4-进程终结" class="headerlink" title="2.4 进程终结"></a>2.4 进程终结</h1><p>虽然有些伤感，但进程始终还是要终结的，内核必须释放它所占有的资源，并把这一不幸进一步告知父进程。<br>进程可能会调用<code>exit()</code>函数终结，也有可能接受到了不可处理也不能忽略的信号，不管进程怎么终结的，该任务大部分会通过<code>do_exit()</code>来完成，定义在<code>kernel/exit.c</code>中：</p>
+<ul>
+<li>将<code>task_struct</code>中的标志成员设置为<code>PF_EXITING</code>；</li>
+<li>调用<code>acct_update_integrals()</code>函数输出记账信息；</li>
+<li>调用<code>exit_mm()</code>释放占用的<code>mm_struct</code>，如果没有其他进程共享，就彻底释放它们；</li>
+<li>接着调用<code>exit_sem()</code>函数，如果进程排队等候<code>IPC</code>信号，则离开队列；</li>
+<li>调用<code>exit_files()</code>和<code>exit_fs()</code>，分别递减文件描述符、文件系统数据的引用计数，如果某个引用计数为零，就释放其资源；</li>
+<li>设置<code>task_struct</code>中的<code>exit_code</code>成员；</li>
+<li>调用<code>exit_notify()</code>函数向父进程发送信号；</li>
+<li>调用<code>schedule()</code>切换到新的进程。</li>
+</ul>
+<p>此时进程不可运行，并处于<code>EXIT_ZOMBIE</code>退出状态，它所占用的内存就是内核栈、<code>thread_info</code>结构和<code>task_struct</code>结构，此时进程存在的唯一目的就是向进程提供信息。</p>
+<hr>
+<h3 id="2-4-1-删除进程描述符"><a href="#2-4-1-删除进程描述符" class="headerlink" title="2.4.1 删除进程描述符"></a>2.4.1 删除进程描述符</h3><p>进程退出时的清理工作和进程描述符的删除被分开执行的，通过<code>wait()</code>函数，调用<code>wait4()</code>系统调用来实现的，他的标准动作是，挂起调用他的进程，直到其中一个子进程退出，此时函数会返回该子进程的<code>PID</code>，此时调用该函数提供的指针会包含子进程的退出代码。<br>最终释放进程描述符时，<code>release_task()</code>函数被调用：</p>
+<ul>
+<li>调用<code>__exit_signal()</code>函数，该函数调用<code>_unhash_process()</code>，后者又调用<code>detach_pid()</code>从<code>pidhash</code>上删除该进程，同事也从任务列表中删除该进程；</li>
+<li><code>_exit_signal()</code>释放目前僵死进程所用的所有剩余资源，并进行最终统计和记录；</li>
+<li>如果该进程是进程组中最后一个进程，那么就要通知僵死的零头进程的父进程；</li>
+<li>调用<code>put_task_struct()</code>释放进程内核栈和<code>thread_info</code>结构所占的页，并释放<code>task_struct</code>所占的<code>slab</code>高速缓存。</li>
+</ul>
+<hr>
+<h3 id="2-5-2-孤儿进程"><a href="#2-5-2-孤儿进程" class="headerlink" title="2.5.2 孤儿进程"></a>2.5.2 孤儿进程</h3><p>如果父进程在子进程之前退出，子进程必须要找到一个新的父亲，不然子进程会一直处于僵死状态，白白耗费内存，对于这个问题，解决办法是子进程在当前进程组内找一个线程作为父亲，如果不行，就让<code>init</code>做他们的父进程。</p>
+<hr>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/17/kernel-3/" rel="next" title="进程调度">
+                <i class="fa fa-chevron-left"></i> 进程调度
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/17/kernel-4/" rel="prev" title="系统调用">
+                系统调用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">LuQiLin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-进程"><span class="nav-number">1.</span> <span class="nav-text">2.1 进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-进程描述符及任务结果"><span class="nav-number">2.</span> <span class="nav-text">2.2 进程描述符及任务结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-分配进程描述符"><span class="nav-number">2.1.</span> <span class="nav-text">2.2.1 分配进程描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-进程描述符的存放"><span class="nav-number">2.2.</span> <span class="nav-text">2.2.2 进程描述符的存放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-进程状态"><span class="nav-number">2.3.</span> <span class="nav-text">2.2.3 进程状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-设置当前进程状态"><span class="nav-number">2.4.</span> <span class="nav-text">2.2.4 设置当前进程状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-5-进程上下文"><span class="nav-number">2.5.</span> <span class="nav-text">2.2.5 进程上下文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-6-进程创建"><span class="nav-number">2.6.</span> <span class="nav-text">2.2.6 进程创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-7-fork-函数调用过程"><span class="nav-number">2.7.</span> <span class="nav-text">2.2.7 fork()函数调用过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-8-vfork"><span class="nav-number">2.8.</span> <span class="nav-text">2.2.8 vfork()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-线程在linux中的实现"><span class="nav-number">3.</span> <span class="nav-text">2.3 线程在linux中的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-线程创建"><span class="nav-number">3.1.</span> <span class="nav-text">2.3.1 线程创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-内核线程"><span class="nav-number">3.2.</span> <span class="nav-text">2.3.2 内核线程</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#2-4-进程终结"><span class="nav-number"></span> <span class="nav-text">2.4 进程终结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-1-删除进程描述符"><span class="nav-number">0.1.</span> <span class="nav-text">2.4.1 删除进程描述符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-2-孤儿进程"><span class="nav-number">0.2.</span> <span class="nav-text">2.5.2 孤儿进程</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">LuQiLin</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
